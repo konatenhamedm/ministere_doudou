@@ -1,0 +1,81 @@
+{% block page_content %}
+    <div class="modal-header">
+        <h4 class="modal-title">Détails Mission</h4>
+        <div class="btn btn-icon btn-sm  ms-2" data-bs-dismiss="modal" aria-label="Close">
+            <span class="svg-icon svg-icon-2x text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor"></rect>
+					<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor"></rect>
+				</svg>
+            </span>
+        </div>
+    </div>
+   
+    <div class="modal-body">
+        <table class="table table-bordered">
+        <tbody>
+                            <tr>
+                    <th>Id</th>
+                    <td>{{ mission.id }}</td>
+                </tr>
+                            <tr>
+                    <th>ObjetMission</th>
+                    <td>{{ mission.objetMission }}</td>
+                </tr>
+                            <tr>
+                    <th>NumeroOM</th>
+                    <td>{{ mission.numeroOM }}</td>
+                </tr>
+                            <tr>
+                    <th>DateCreationMission</th>
+                    <td>{{ mission.dateCreationMission ? mission.dateCreationMission|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                            <tr>
+                    <th>DateDebutPrevue</th>
+                    <td>{{ mission.dateDebutPrevue ? mission.dateDebutPrevue|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                            <tr>
+                    <th>DateFinPrevue</th>
+                    <td>{{ mission.dateFinPrevue ? mission.dateFinPrevue|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                            <tr>
+                    <th>DateDebutEffective</th>
+                    <td>{{ mission.dateDebutEffective ? mission.dateDebutEffective|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                            <tr>
+                    <th>DateFinEffective</th>
+                    <td>{{ mission.dateFinEffective ? mission.dateFinEffective|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+                            <tr>
+                    <th>MontantParticipantMission</th>
+                    <td>{{ mission.montantParticipantMission }}</td>
+                </tr>
+                            <tr>
+                    <th>PourcentageAvanceMission</th>
+                    <td>{{ mission.pourcentageAvanceMission }}</td>
+                </tr>
+                            <tr>
+                    <th>InitiateurMission</th>
+                    <td>{{ mission.initiateurMission }}</td>
+                </tr>
+                            <tr>
+                    <th>ImputationBudgetaire</th>
+                    <td>{{ mission.imputationBudgetaire }}</td>
+                </tr>
+                            <tr>
+                    <th>Options</th>
+                    <td>{{ mission.options ? mission.options|json_encode : '' }}</td>
+                </tr>
+                    </tbody>
+    </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn dark btn-outline" data-bs-dismiss="modal">Fermer</button>
+    </div>
+
+{% endblock %}
+{% block java %}
+    <script>
+        
+    </script>
+{% endblock %}

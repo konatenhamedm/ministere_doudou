@@ -1,0 +1,20 @@
+<td class="p-2">
+
+    <div class="field-matiere">{{ form_widget(colonne.fichier) }}</div>
+</td>
+
+
+<td class="p-2">
+
+    <div style="display:no " class="field-matiere">
+        {% if colonne.vars.value %}
+
+        <a class="btn btn-dark btn-sm" target="_blank"
+            href=" {{ asset('uploads/media_entreprise/' ~  colonne.vars.value.fichier.alt) }} " download> <i
+                class="bi bi-upload"></i>
+        </a>
+
+
+        {% endif %}
+    </div>
+</td>

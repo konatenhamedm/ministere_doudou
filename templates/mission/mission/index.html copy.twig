@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Mission</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="sousActivite" class="form-label">Sous-activité</label>
+                    <select class="form-select" id="sousActivite">
+                        <option selected>Choisir...</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="objetMission" class="form-label">Objet de la mission</label>
+                    <input type="text" class="form-control" id="objetMission" placeholder="Saisir l'objet">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="imputationBudgetaire" class="form-label">Imputation Budgétaire</label>
+                    <input type="text" class="form-control" id="imputationBudgetaire" placeholder="Saisir l'imputation">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Options</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="hebergementAssure">
+                        <label class="form-check-label" for="hebergementAssure">Hébergement assuré</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="repasFourni">
+                        <label class="form-check-label" for="repasFourni">Repas fourni</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="initiePar" class="form-label">Initié par</label>
+                    <input type="text" class="form-control" id="initiePar" placeholder="Nom de l'initiateur">
+                </div>
+                <div class="col-md-6">
+                    <label for="sourceFinancement" class="form-label">Source de financement</label>
+                    <select class="form-select" id="sourceFinancement">
+                        <option selected>IDA</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="montantRecevoir" class="form-label">Montant à recevoir/Participant</label>
+                    <input type="number" class="form-control" id="montantRecevoir" placeholder="0">
+                </div>
+                <div class="col-md-6">
+                    <label for="montantAvance" class="form-label">Montant de l'avance/Participant</label>
+                    <input type="number" class="form-control" id="montantAvance" placeholder="0">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="fichierTDR" class="form-label">Fichier TDR (doc, docx, pdf)</label>
+                <input class="form-control" type="file" id="fichierTDR">
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="dateDebut" class="form-label">Date de début</label>
+                    <input type="date" class="form-control" id="dateDebut" value="2025-01-26">
+                </div>
+                <div class="col-md-6">
+                    <label for="dateFin" class="form-label">Date de fin</label>
+                    <input type="date" class="form-control" id="dateFin">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="creePar" class="form-label">Créée par</label>
+                    <select class="form-select" id="creePar">
+                        <option selected>DOUDOU Casimir</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="moyenTransport" class="form-label">Moyen de transport</label>
+                    <select class="form-select" id="moyenTransport">
+                        <option selected>Véhicules Projet</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="participants" class="form-label">Participants</label>
+                <input type="text" class="form-control" id="participants" placeholder="Ajouter des participants">
+            </div>
+
+            <button type="button" class="btn btn-primary mb-3">+ Ajouter</button>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Localité</th>
+                            <th>Nombre de jours</th>
+                            <th>Date de début</th>
+                            <th>Date de fin</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-select">
+                                    <option selected>Choisir...</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                </select>
+                            </td>
+                            <td><input type="number" class="form-control" placeholder="0"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><button class="btn btn-danger btn-sm">Supprimer</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
