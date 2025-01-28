@@ -139,7 +139,7 @@ class DemandeController extends BaseController
                     'render' => function ($value, Demande $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
-                            'target' => '#exampleModalSizeLg2',
+                            'target' => '#exampleModalSizeSm2',
 
                             'actions' => [
                                 'edit' => [
