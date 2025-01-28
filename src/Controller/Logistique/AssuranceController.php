@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\GestionAtelier;
+namespace App\Controller\Logistique;
 
-use App\Entity\Atelier;
-use App\Form\AtelierType;
-use App\Repository\AtelierRepository;
+use App\Entity\Assurance;
+use App\Form\AssuranceType;
+use App\Repository\AssuranceRepository;
 use App\Service\ActionRender;
 use App\Service\FormError;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -17,15 +17,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\BaseController;
-use App\Entity\DocumentAtelier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
-#[Route('/ads/gestionatelier/atelier')]
-class AtelierController extends BaseController
+#[Route('/ads/logistique/assurance')]
+class AssuranceController extends BaseController
 {
-    const INDEX_ROOT_NAME = 'app_gestionatelier_atelier_index';
+    const INDEX_ROOT_NAME = 'app_logistique_assurance_index';
 
-    #[Route('/', name: 'app_gestionatelier_atelier_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'app_logistique_assurance_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
 
@@ -33,15 +33,28 @@ class AtelierController extends BaseController
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
-           ->add('libelle', TextColumn::class, ['label' => 'Libelle'])
-            ->add('description', TextColumn::class, ['label' => 'Description'])
-            ->add('dateDebut', DateTimeColumn::class, ['label' => 'Date de debut', 'format' => 'd/m/Y'])
-            ->add('dateFin', DateTimeColumn::class, ['label' => 'Date de fin', 'format' => 'd/m/Y'])
-            // ->add('id', TextColumn::class, ['label' => 'Identifiant'])
+            // 
+            // 
+            // ->add('dateDebut')
+            // ->add('dateFin')
+            // ->add('montant')
+            // ->add('vehicule', TextColumn::class, ['label' => 'Vehicule','field' => 'vehecule.immatriculation'])
+            ->add('compagnie', TextColumn::class, ['label' => 'Compagnie'])
+            ->add('numeroPolice', TextColumn::class, ['label' => 'N° Police'])
+            ->add('dateDebut', DateTimeColumn::class, ['label' => 'Date Debut', 'format' => 'd/m/Y'])
+            ->add('dateFin', DateTimeColumn::class, ['label' => 'Date Fin,', 'format' => 'd/m/Y'])
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Atelier::class,
+                'entity' => Assurance::class,
+                'query' => function (QueryBuilder $qb) {
+                    $qb->select(['assurance',]) // 't' a été retiré car non utilisé
+                        ->from(Assurance::class, 'assurance')
+                        // ->join('assurance.vehecules', 'vehecule')
+                        // ->join('affectation.employes', 'employe')
+
+                        ->orderBy('assurance.id', 'DESC'); // Suppression de l'espace superflu après 'id'
+                }
             ])
-            ->setName('dt_app_gestionatelier_atelier');
+            ->setName('dt_app_logistique_assurance');
         if ($permission != null) {
 
             $renders = [
@@ -109,21 +122,23 @@ class AtelierController extends BaseController
                     'orderable' => false,
                     'globalSearchable' => false,
                     'className' => 'grid_row_actions',
-                    'render' => function ($value, Atelier $context) use ($renders) {
+                    'render' => function ($value, Assurance $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_edit', ['id' => $value]),
+                                    'target' => '#exampleModalSizeSm2',
+
+                                    'url' => $this->generateUrl('app_logistique_assurance_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',
                                     'attrs' => ['class' => 'btn-default'],
                                     'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_show', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_logistique_assurance_show', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-eye',
                                     'attrs' => ['class' => 'btn-primary'],
@@ -131,7 +146,7 @@ class AtelierController extends BaseController
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_delete', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_logistique_assurance_delete', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-trash',
                                     'attrs' => ['class' => 'btn-main'],
@@ -153,28 +168,19 @@ class AtelierController extends BaseController
         }
 
 
-        return $this->render('gestionatelier/atelier/index.html.twig', [
+        return $this->render('logistique/assurance/index.html.twig', [
             'datatable' => $table,
             'permition' => $permission
         ]);
     }
 
-    #[Route('/new', name: 'app_gestionatelier_atelier_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_logistique_assurance_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
-        $atelier = new Atelier();
-        $documentAtelier = new DocumentAtelier();
-        $atelier->addDocumentAtelier($documentAtelier);
-        $validationGroups = ['Default', 'FileRequired', 'oui'];
-        $filePath = 'atelier';
-        $form = $this->createForm(AtelierType::class, $atelier, [
+        $assurance = new Assurance();
+        $form = $this->createForm(AssuranceType::class, $assurance, [
             'method' => 'POST',
-            'doc_options' => [
-                'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
-                'attrs' => ['class' => 'filestyle'],
-            ],
-            'validation_groups' => $validationGroups, 
-            'action' => $this->generateUrl('app_gestionatelier_atelier_new')
+            'action' => $this->generateUrl('app_logistique_assurance_new')
         ]);
         $form->handleRequest($request);
 
@@ -185,12 +191,12 @@ class AtelierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_assurance_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($atelier);
+                $entityManager->persist($assurance);
                 $entityManager->flush();
 
                 $data = true;
@@ -216,28 +222,28 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/new.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/assurance/new.html.twig', [
+            'assurance' => $assurance,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/show', name: 'app_gestionatelier_atelier_show', methods: ['GET'])]
-    public function show(Atelier $atelier): Response
+    #[Route('/{id}/show', name: 'app_logistique_assurance_show', methods: ['GET'])]
+    public function show(Assurance $assurance): Response
     {
-        return $this->render('gestionatelier/atelier/show.html.twig', [
-            'atelier' => $atelier,
+        return $this->render('logistique/assurance/show.html.twig', [
+            'assurance' => $assurance,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_gestionatelier_atelier_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Atelier $atelier, EntityManagerInterface $entityManager, FormError $formError): Response
+    #[Route('/{id}/edit', name: 'app_logistique_assurance_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Assurance $assurance, EntityManagerInterface $entityManager, FormError $formError): Response
     {
 
-        $form = $this->createForm(AtelierType::class, $atelier, [
+        $form = $this->createForm(AssuranceType::class, $assurance, [
             'method' => 'POST',
-            'action' => $this->generateUrl('app_gestionatelier_atelier_edit', [
-                'id' => $atelier->getId()
+            'action' => $this->generateUrl('app_logistique_assurance_edit', [
+                'id' => $assurance->getId()
             ])
         ]);
 
@@ -251,12 +257,12 @@ class AtelierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_assurance_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($atelier);
+                $entityManager->persist($assurance);
                 $entityManager->flush();
 
                 $data = true;
@@ -281,21 +287,21 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/edit.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/assurance/edit.html.twig', [
+            'assurance' => $assurance,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_gestionatelier_atelier_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_logistique_assurance_delete', methods: ['DELETE', 'GET'])]
+    public function delete(Request $request, Assurance $assurance, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                    'app_gestionatelier_atelier_delete',
+                    'app_logistique_assurance_delete',
                     [
-                        'id' => $atelier->getId()
+                        'id' => $assurance->getId()
                     ]
                 )
             )
@@ -304,10 +310,10 @@ class AtelierController extends BaseController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;
-            $entityManager->remove($atelier);
+            $entityManager->remove($assurance);
             $entityManager->flush();
 
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_assurance_index');
 
             $message = 'Opération effectuée avec succès';
 
@@ -327,8 +333,8 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/delete.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/assurance/delete.html.twig', [
+            'assurance' => $assurance,
             'form' => $form,
         ]);
     }

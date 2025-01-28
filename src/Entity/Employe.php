@@ -84,6 +84,10 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'rapporteur', targetEntity: InfoRapportage::class)]
     private Collection $infoRapportages;
 
+    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Affectation::class)]
+    private Collection $affectations;
+
+
   
 
     public function __construct()
@@ -94,6 +98,7 @@ class Employe
         $this->rapportages = new ArrayCollection();
         $this->reunions = new ArrayCollection();
         $this->infoRapportages = new ArrayCollection();
+        $this->affectations = new ArrayCollection();
     }
 
 
@@ -456,6 +461,38 @@ class Employe
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Affectation>
+     */
+    public function getAffectations(): Collection
+    {
+        return $this->affectations;
+    }
+
+    public function addAffectation(Affectation $affectation): static
+    {
+        if (!$this->affectations->contains($affectation)) {
+            $this->affectations->add($affectation);
+            $affectation->setEmploye($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffectation(Affectation $affectation): static
+    {
+        if ($this->affectations->removeElement($affectation)) {
+            // set the owning side to null (unless already changed)
+            if ($affectation->getEmploye() === $this) {
+                $affectation->setEmploye(null);
+            }
+        }
+
+        return $this;
+    }
+
+ 
 
 
 

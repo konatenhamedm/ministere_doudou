@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\GestionAtelier;
+namespace App\Controller\Logistique;
 
-use App\Entity\Atelier;
-use App\Form\AtelierType;
-use App\Repository\AtelierRepository;
+use App\Entity\VisiteTechnique;
+use App\Form\VisiteTechniqueType;
+use App\Repository\VisiteTechniqueRepository;
 use App\Service\ActionRender;
 use App\Service\FormError;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -17,15 +17,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\BaseController;
-use App\Entity\DocumentAtelier;
 use Doctrine\ORM\EntityManagerInterface;
 
-#[Route('/ads/gestionatelier/atelier')]
-class AtelierController extends BaseController
+#[Route('/ads/logistique/visite/technique')]
+class VisiteTechniqueController extends BaseController
 {
-    const INDEX_ROOT_NAME = 'app_gestionatelier_atelier_index';
+    const INDEX_ROOT_NAME = 'app_logistique_visite_technique_index';
 
-    #[Route('/', name: 'app_gestionatelier_atelier_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'app_logistique_visite_technique_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
 
@@ -33,15 +32,20 @@ class AtelierController extends BaseController
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
-           ->add('libelle', TextColumn::class, ['label' => 'Libelle'])
-            ->add('description', TextColumn::class, ['label' => 'Description'])
-            ->add('dateDebut', DateTimeColumn::class, ['label' => 'Date de debut', 'format' => 'd/m/Y'])
-            ->add('dateFin', DateTimeColumn::class, ['label' => 'Date de fin', 'format' => 'd/m/Y'])
-            // ->add('id', TextColumn::class, ['label' => 'Identifiant'])
-            ->createAdapter(ORMAdapter::class, [
-                'entity' => Atelier::class,
+              ->add('dateDerniereVisite', DateTimeColumn::class, [
+                  'label' => 'Date dernière visite',
+                  'format' => 'd/m/Y',
+              ])
+            ->add('dateProchaineVisite', DateTimeColumn::class, [
+                'label' => 'Date prochaine visite',
+                'format' => 'd/m/Y',
             ])
-            ->setName('dt_app_gestionatelier_atelier');
+            // ->add('observation')
+            // ->add('vehicule')
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => VisiteTechnique::class,
+            ])
+            ->setName('dt_app_logistique_visite_technique');
         if ($permission != null) {
 
             $renders = [
@@ -109,21 +113,23 @@ class AtelierController extends BaseController
                     'orderable' => false,
                     'globalSearchable' => false,
                     'className' => 'grid_row_actions',
-                    'render' => function ($value, Atelier $context) use ($renders) {
+                    'render' => function ($value, VisiteTechnique $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_edit', ['id' => $value]),
+                                    'target' => '#exampleModalSizeSm2',
+
+                                    'url' => $this->generateUrl('app_logistique_visite_technique_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',
                                     'attrs' => ['class' => 'btn-default'],
                                     'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_show', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_logistique_visite_technique_show', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-eye',
                                     'attrs' => ['class' => 'btn-primary'],
@@ -131,7 +137,7 @@ class AtelierController extends BaseController
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_gestionatelier_atelier_delete', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_logistique_visite_technique_delete', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-trash',
                                     'attrs' => ['class' => 'btn-main'],
@@ -153,28 +159,19 @@ class AtelierController extends BaseController
         }
 
 
-        return $this->render('gestionatelier/atelier/index.html.twig', [
+        return $this->render('logistique/visite_technique/index.html.twig', [
             'datatable' => $table,
             'permition' => $permission
         ]);
     }
 
-    #[Route('/new', name: 'app_gestionatelier_atelier_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_logistique_visite_technique_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
-        $atelier = new Atelier();
-        $documentAtelier = new DocumentAtelier();
-        $atelier->addDocumentAtelier($documentAtelier);
-        $validationGroups = ['Default', 'FileRequired', 'oui'];
-        $filePath = 'atelier';
-        $form = $this->createForm(AtelierType::class, $atelier, [
+        $visiteTechnique = new VisiteTechnique();
+        $form = $this->createForm(VisiteTechniqueType::class, $visiteTechnique, [
             'method' => 'POST',
-            'doc_options' => [
-                'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
-                'attrs' => ['class' => 'filestyle'],
-            ],
-            'validation_groups' => $validationGroups, 
-            'action' => $this->generateUrl('app_gestionatelier_atelier_new')
+            'action' => $this->generateUrl('app_logistique_visite_technique_new')
         ]);
         $form->handleRequest($request);
 
@@ -185,12 +182,12 @@ class AtelierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_visite_technique_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($atelier);
+                $entityManager->persist($visiteTechnique);
                 $entityManager->flush();
 
                 $data = true;
@@ -216,28 +213,28 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/new.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/visite_technique/new.html.twig', [
+            'visite_technique' => $visiteTechnique,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/show', name: 'app_gestionatelier_atelier_show', methods: ['GET'])]
-    public function show(Atelier $atelier): Response
+    #[Route('/{id}/show', name: 'app_logistique_visite_technique_show', methods: ['GET'])]
+    public function show(VisiteTechnique $visiteTechnique): Response
     {
-        return $this->render('gestionatelier/atelier/show.html.twig', [
-            'atelier' => $atelier,
+        return $this->render('logistique/visite_technique/show.html.twig', [
+            'visite_technique' => $visiteTechnique,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_gestionatelier_atelier_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Atelier $atelier, EntityManagerInterface $entityManager, FormError $formError): Response
+    #[Route('/{id}/edit', name: 'app_logistique_visite_technique_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, VisiteTechnique $visiteTechnique, EntityManagerInterface $entityManager, FormError $formError): Response
     {
 
-        $form = $this->createForm(AtelierType::class, $atelier, [
+        $form = $this->createForm(VisiteTechniqueType::class, $visiteTechnique, [
             'method' => 'POST',
-            'action' => $this->generateUrl('app_gestionatelier_atelier_edit', [
-                'id' => $atelier->getId()
+            'action' => $this->generateUrl('app_logistique_visite_technique_edit', [
+                'id' => $visiteTechnique->getId()
             ])
         ]);
 
@@ -251,12 +248,12 @@ class AtelierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_visite_technique_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($atelier);
+                $entityManager->persist($visiteTechnique);
                 $entityManager->flush();
 
                 $data = true;
@@ -281,21 +278,21 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/edit.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/visite_technique/edit.html.twig', [
+            'visite_technique' => $visiteTechnique,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_gestionatelier_atelier_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_logistique_visite_technique_delete', methods: ['DELETE', 'GET'])]
+    public function delete(Request $request, VisiteTechnique $visiteTechnique, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                    'app_gestionatelier_atelier_delete',
+                    'app_logistique_visite_technique_delete',
                     [
-                        'id' => $atelier->getId()
+                        'id' => $visiteTechnique->getId()
                     ]
                 )
             )
@@ -304,10 +301,10 @@ class AtelierController extends BaseController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;
-            $entityManager->remove($atelier);
+            $entityManager->remove($visiteTechnique);
             $entityManager->flush();
 
-            $redirect = $this->generateUrl('app_gestionatelier_atelier_index');
+            $redirect = $this->generateUrl('app_logistique_visite_technique_index');
 
             $message = 'Opération effectuée avec succès';
 
@@ -327,8 +324,8 @@ class AtelierController extends BaseController
             }
         }
 
-        return $this->renderForm('gestionatelier/atelier/delete.html.twig', [
-            'atelier' => $atelier,
+        return $this->renderForm('logistique/visite_technique/delete.html.twig', [
+            'visite_technique' => $visiteTechnique,
             'form' => $form,
         ]);
     }
