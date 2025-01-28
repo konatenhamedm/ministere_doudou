@@ -33,9 +33,21 @@ class Article
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: LigneDemande::class)]
     private Collection $Lignedemande;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: LigneMouvement::class)]
+    private Collection $ligneMouvements;
+
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: LigneEntree::class)]
+    private Collection $ligneEntrees;
+
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: LigneSortie::class)]
+    private Collection $ligneSorties;
+
     public function __construct()
     {
         $this->Lignedemande = new ArrayCollection();
+        $this->ligneMouvements = new ArrayCollection();
+        $this->ligneEntrees = new ArrayCollection();
+        $this->ligneSorties = new ArrayCollection();
     }
 
 
@@ -132,6 +144,96 @@ class Article
             // set the owning side to null (unless already changed)
             if ($lignedemande->getArticle() === $this) {
                 $lignedemande->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneMouvement>
+     */
+    public function getLigneMouvements(): Collection
+    {
+        return $this->ligneMouvements;
+    }
+
+    public function addLigneMouvement(LigneMouvement $ligneMouvement): static
+    {
+        if (!$this->ligneMouvements->contains($ligneMouvement)) {
+            $this->ligneMouvements->add($ligneMouvement);
+            $ligneMouvement->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneMouvement(LigneMouvement $ligneMouvement): static
+    {
+        if ($this->ligneMouvements->removeElement($ligneMouvement)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneMouvement->getArticle() === $this) {
+                $ligneMouvement->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneEntree>
+     */
+    public function getLigneEntrees(): Collection
+    {
+        return $this->ligneEntrees;
+    }
+
+    public function addLigneEntree(LigneEntree $ligneEntree): static
+    {
+        if (!$this->ligneEntrees->contains($ligneEntree)) {
+            $this->ligneEntrees->add($ligneEntree);
+            $ligneEntree->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneEntree(LigneEntree $ligneEntree): static
+    {
+        if ($this->ligneEntrees->removeElement($ligneEntree)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneEntree->getArticle() === $this) {
+                $ligneEntree->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneSortie>
+     */
+    public function getLigneSorties(): Collection
+    {
+        return $this->ligneSorties;
+    }
+
+    public function addLigneSorty(LigneSortie $ligneSorty): static
+    {
+        if (!$this->ligneSorties->contains($ligneSorty)) {
+            $this->ligneSorties->add($ligneSorty);
+            $ligneSorty->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneSorty(LigneSortie $ligneSorty): static
+    {
+        if ($this->ligneSorties->removeElement($ligneSorty)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneSorty->getArticle() === $this) {
+                $ligneSorty->setArticle(null);
             }
         }
 
