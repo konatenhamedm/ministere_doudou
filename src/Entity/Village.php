@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\VillageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VillageRepository::class)]
@@ -24,6 +26,14 @@ class Village
 
     #[ORM\ManyToOne(inversedBy: 'villages')]
     private ?SousPrefecture $sousPrefecture = null;
+
+    #[ORM\OneToMany(mappedBy: 'village', targetEntity: LigneMission::class)]
+    private Collection $lignemission;
+
+    public function __construct()
+    {
+        $this->lignemission = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +84,36 @@ class Village
     public function setSousPrefecture(?SousPrefecture $sousPrefecture): static
     {
         $this->sousPrefecture = $sousPrefecture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneMission>
+     */
+    public function getLignemission(): Collection
+    {
+        return $this->lignemission;
+    }
+
+    public function addLignemission(LigneMission $lignemission): static
+    {
+        if (!$this->lignemission->contains($lignemission)) {
+            $this->lignemission->add($lignemission);
+            $lignemission->setVillage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLignemission(LigneMission $lignemission): static
+    {
+        if ($this->lignemission->removeElement($lignemission)) {
+            // set the owning side to null (unless already changed)
+            if ($lignemission->getVillage() === $this) {
+                $lignemission->setVillage(null);
+            }
+        }
 
         return $this;
     }

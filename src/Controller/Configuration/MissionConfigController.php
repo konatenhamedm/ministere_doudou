@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin/config/mission')]
 class  MissionConfigController extends BaseController
 {
-    private const MODULE_NAME = 'Missions';
+    private const MODULE_NAME = 'MISSIONS';
     const INDEX_ROOT_NAME = 'app_config_missions_index';
 
     #[Route(path: '/index', name: 'app_config_missions_index', methods: ['GET', 'POST'])]

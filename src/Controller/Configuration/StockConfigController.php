@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin/config/stock')]
 class  StockConfigController extends BaseController
 {
-    private const MODULE_NAME = 'Gestion';
+    private const MODULE_NAME = 'GESTION DE STOCK';
     const INDEX_ROOT_NAME = 'app_config_stocks_index';
 
     #[Route(path: '/index', name: 'app_config_stocks_index', methods: ['GET', 'POST'])]
@@ -31,7 +31,7 @@ class  StockConfigController extends BaseController
             [
                 'label' => 'DEMANDE',
                 'icon' => 'bi bi-list',
-                'href' => $this->generateUrl('app_config_stock_ls', ['module' => 'denande'])
+                'href' => $this->generateUrl('app_config_stock_ls', ['module' => 'demande'])
             ],
 
         [
@@ -64,7 +64,7 @@ class  StockConfigController extends BaseController
             ]
         ]);
 
-        return $this->render('config/mission/index.html.twig', [
+        return $this->render('config/stock/index.html.twig', [
             'modules' => $modules,
             'breadcrumb' => $breadcrumb,
             'module_name' => self::MODULE_NAME,
@@ -85,7 +85,7 @@ class  StockConfigController extends BaseController
                 [
                     'label' => 'Catégories',
                     'id' => 'param_categorie',
-                    'href' => $this->generateUrl('app_mission_tarif_index')
+                    'href' => $this->generateUrl('app_gestionstock_categorie_index')
                 ],
               
 
@@ -93,19 +93,20 @@ class  StockConfigController extends BaseController
                 [
                     'label' => 'Articles',
                     'id' => 'param_article',
-                    'href' => $this->generateUrl('app_mission_moyen_transport_index')
+                    'href' => $this->generateUrl('app_gestionstock_article_index')
                 ],  
 
-                [
-                    'label' => 'Etat',
-                    'id' => 'param_etat',
-                    'href' => $this->generateUrl('app_mission_source_financement_index')
-                ],
+               
 
                 [
                     'label' => 'Sens',
                     'id' => 'param_sens',
-                    'href' => $this->generateUrl('app_mission_source_financement_index')
+                    'href' => $this->generateUrl('app_gestionstock_sens_index')
+                ],
+                [
+                    'label' => 'Etat',
+                    'id' => 'param_etat',
+                    'href' => $this->generateUrl('app_gestionstock_etat_index')
                 ],
 
             
@@ -129,23 +130,29 @@ class  StockConfigController extends BaseController
                     'href' => $this->generateUrl('app_config_stock_index', ['etat' => 'valide'])
                 ],
 
+                [
+                    'label' => 'Livrées',
+                    'id' => 'param_livree',
+                    'href' => $this->generateUrl('app_config_stock_index', ['etat' => 'livre'])
+                ],
+
              
             ],
 
-            'finalise' => [
+            // 'finalise' => [
 
                 
 
-                [
-                    'label' => 'Finalisées',
-                    'id' => 'param_finalise',
-                    'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'finalise'])
+            //     [
+            //         'label' => 'Finalisées',
+            //         'id' => 'param_finalise',
+            //         'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'finalise'])
               
-                ],
-            ]
+            //     ],
+            // ]
         ];
 
 
-        return $this->render('config/mission/liste.html.twig', ['links' => $parametes[$module] ?? []]);
+        return $this->render('config/stock/liste.html.twig', ['links' => $parametes[$module] ?? []]);
     }
 }

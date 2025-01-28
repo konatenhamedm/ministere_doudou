@@ -1,91 +1,71 @@
 <?php
 
-namespace App\Controller\Mission;
+namespace App\Controller\GestionStock;
 
-use App\Entity\Audience;
-use App\Form\AudienceType;
-use App\Service\FormError;
+use App\Entity\Demande;
+use App\Form\DemandeType;
+use App\Repository\DemandeRepository;
 use App\Service\ActionRender;
-use Doctrine\ORM\QueryBuilder;
-use App\Controller\BaseController;
-use App\Entity\LigneMission;
-use App\Entity\Mission;
-use App\Form\JutificationAudienceType;
-use App\Form\MissionType;
-use App\Repository\AudienceRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Omines\DataTablesBundle\DataTableFactory;
-use Symfony\Component\HttpFoundation\Request;
+use App\Service\FormError;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\BoolColumn;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Symfony\Component\Workflow\Exception\LogicException;
+use App\Controller\BaseController;
+use App\Entity\LigneDemande;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
-#[Route('/ads/mission/mission')]
-class MissionController extends BaseController
+#[Route('/ads/gestionstock/demande')]
+class DemandeController extends BaseController
 {
-    const INDEX_ROOT_NAME = 'app_config_mission_index';
-  
-    #[Route('/{etat}/liste', name: 'app_config_mission_index', methods: ['GET', 'POST'])]
+    const INDEX_ROOT_NAME = 'app_config_stock_index';
+
+
+ #[Route('/{etat}/liste', name: 'app_config_stock_index', methods: ['GET', 'POST'])]
     public function liste(Request $request, string $etat, DataTableFactory $dataTableFactory): Response
     {
-
-       
+        
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
         // if ($etat == 'en_cours') {
         //     $titre = "En attente de validation";
         // } elseif ($etat == 'valider') {
         //     $titre = "Validées";
         // } 
-
-        
         $table = $dataTableFactory->create()
-           ->add('objetMission', TextColumn::class, ['label' => 'Objet'])
-            // ->add('numeroOM')
-            // ->add('dateCreationMission')
-            // ->add('dateDebutPrevue')
-            // ->add('dateFinPrevue')
-            // ->add('dateDebutEffective')
-            // ->add('dateFinEffective')
-            // ->add('montantParticipantMission')
-            // ->add('pourcentageAvanceMission')
-            // ->add('initiateurMission')
-            // ->add('imputationBudgetaire')
-            // ->add('options')
-            // ->add('employe')
-            // ->add('moyenTransport')
-            // ->add('participants')
-            // ->add('compteRendu')
-            // ->add('fichier')
-            // ->add('daterencontre', DateTimeColumn::class, [
-            //     'label' => 'Date de la rencontre',
-            //     "format" => 'd-m-Y'
-            // ])
-            // ->add('communaute', TextColumn::class, ['label' => 'Communauté', 'field' => 'co.libelle'])
-            // ->add('nomchef', TextColumn::class, ['label' => 'Nom du chef'])
-            // ->add('numero', TextColumn::class, ['label' => 'Numéro'])
-            // ->add('motif', TextColumn::class, ['label' => 'Motif'])
-         
+            ->add('reference', TextColumn::class, ['label' => 'Reference'])
+            ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
+            ->add('dateDemande', DateTimeColumn::class, ['label' => 'Date de demande'])
+            // ->add('dateValidation')
+            // ->add('dateLivraison')
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Mission::class,
+                'entity' => Demande::class,
                 'query' => function (QueryBuilder $req) use ($etat) {
-                    $req->select('m')
-                        ->from(Mission::class, 'm')
+                    $req->select('d')
+                        ->from(Demande::class, 'd')
                         // ->leftJoin('a.communaute', 'co')
                         ;
-
+      
                     if ($etat == 'en_cours') {
-                        $req->andWhere("m.etat =:etat")
+                       
+                        $req->andWhere("d.etat =:etat")
                             ->setParameter('etat', "en_cours");
                     } elseif ($etat == 'valide') {
-                        $req->andWhere("m.etat =:etat")
+                        $req->andWhere("d.etat =:etat")
                             ->setParameter('etat', "valide");
-                    }
+                    } elseif ($etat == 'livree') {
+                    $req->andWhere("d.etat =:etat")
+                        ->setParameter('etat', "livre");
+                }
                 }
             ])
-            ->setName('dt_app_config_mission_' . $etat);
+    
+            ->setName('dt_app_gestionstock_demande_' . $etat);
 
         if ($permission != null) {
             $renders = [
@@ -156,21 +136,21 @@ class MissionController extends BaseController
                     'orderable' => false,
                     'globalSearchable' => false,
                     'className' => 'grid_row_actions',
-                    'render' => function ($value, Mission $context) use ($renders) {
+                    'render' => function ($value, Demande $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'url' => $this->generateUrl('app_mission_mission_edit', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_gestionstock_demande_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',
                                     'attrs' => ['class' => 'btn-default'],
                                     'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_mission_mission_show', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_gestionstock_demande_show', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-eye',
                                     'attrs' => ['class' => 'btn-primary'],
@@ -178,7 +158,7 @@ class MissionController extends BaseController
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_mission_mission_delete', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_gestionstock_demande_delete', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-trash',
                                     'attrs' => ['class' => 'btn-main'],
@@ -203,30 +183,22 @@ class MissionController extends BaseController
         }
 
 
-        return $this->render('mission/mission/index.html.twig', [
+        return $this->render('gestionstock/demande/index.html.twig', [
             'datatable' => $table,
             'permition' => $permission,
             'etat' => $etat,
             
         ]);
     }
-
-    #[Route('/new', name: 'app_mission_mission_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_gestionstock_demande_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
-        $mission = new Mission();
-           $ligneMissions = new LigneMission();
-        $mission->addLigneMission($ligneMissions);
-        $validationGroups = ['Default', 'FileRequired', 'oui'];
-        $filePath = 'mission';
-        $form = $this->createForm(MissionType::class, $mission, [
+        $demande = new Demande();
+        // $ligneDemandes = new LigneDemande();
+        // $demande->addLigneDemande($ligneDemandes);
+        $form = $this->createForm(DemandeType::class, $demande, [
             'method' => 'POST',
-            'doc_options' => [
-                'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
-                'attrs' => ['class' => 'filestyle'],
-            ],
-            'validation_groups' => $validationGroups, 
-            'action' => $this->generateUrl('app_mission_mission_new')
+            'action' => $this->generateUrl('app_gestionstock_demande_new')
         ]);
         $form->handleRequest($request);
 
@@ -237,12 +209,12 @@ class MissionController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_config_missions_index');
+            $redirect = $this->generateUrl('app_config_stocks_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($mission);
+                $entityManager->persist($demande);
                 $entityManager->flush();
 
                 $data = true;
@@ -268,35 +240,28 @@ class MissionController extends BaseController
             }
         }
 
-        return $this->renderForm('mission/mission/new.html.twig', [
-            'mission' => $mission,
+        return $this->renderForm('gestionstock/demande/new.html.twig', [
+            'demande' => $demande,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/show', name: 'app_mission_mission_show', methods: ['GET'])]
-    public function show(Mission $mission): Response
+    #[Route('/{id}/show', name: 'app_gestionstock_demande_show', methods: ['GET'])]
+    public function show(Demande $demande): Response
     {
-        return $this->render('mission/mission/show.html.twig', [
-            'mission' => $mission,
+        return $this->render('gestionstock/demande/show.html.twig', [
+            'demande' => $demande,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_mission_mission_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Mission $mission, EntityManagerInterface $entityManager, FormError $formError): Response
+    #[Route('/{id}/edit', name: 'app_gestionstock_demande_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Demande $demande, EntityManagerInterface $entityManager, FormError $formError): Response
     {
-       
-        $validationGroups = ['Default', 'FileRequired', 'oui'];
-        $filePath = 'mission';
-        $form = $this->createForm(MissionType::class, $mission, [
+
+        $form = $this->createForm(DemandeType::class, $demande, [
             'method' => 'POST',
-            'doc_options' => [
-                'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
-                'attrs' => ['class' => 'filestyle'],
-            ],
-            'validation_groups' => $validationGroups,
-            'action' => $this->generateUrl('app_mission_mission_edit', [
-                'id' => $mission->getId()
+            'action' => $this->generateUrl('app_gestionstock_demande_edit', [
+                'id' => $demande->getId()
             ])
         ]);
 
@@ -310,12 +275,12 @@ class MissionController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_config_missions_index');
+            $redirect = $this->generateUrl('app_config_stocks_index');
 
 
             if ($form->isValid()) {
 
-                $entityManager->persist($mission);
+                $entityManager->persist($demande);
                 $entityManager->flush();
 
                 $data = true;
@@ -340,21 +305,21 @@ class MissionController extends BaseController
             }
         }
 
-        return $this->renderForm('mission/mission/edit.html.twig', [
-            'mission' => $mission,
+        return $this->renderForm('gestionstock/demande/edit.html.twig', [
+            'demande' => $demande,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_mission_mission_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Request $request, Mission $mission, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_gestionstock_demande_delete', methods: ['DELETE', 'GET'])]
+    public function delete(Request $request, Demande $demande, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                    'app_mission_mission_delete',
+                    'app_gestionstock_demande_delete',
                     [
-                        'id' => $mission->getId()
+                        'id' => $demande->getId()
                     ]
                 )
             )
@@ -363,10 +328,10 @@ class MissionController extends BaseController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;
-            $entityManager->remove($mission);
+            $entityManager->remove($demande);
             $entityManager->flush();
 
-            $redirect = $this->generateUrl('app_config_missions_index');
+            $redirect = $this->generateUrl('app_config_stocks_index');
 
             $message = 'Opération effectuée avec succès';
 
@@ -386,8 +351,8 @@ class MissionController extends BaseController
             }
         }
 
-        return $this->renderForm('mission/mission/delete.html.twig', [
-            'mission' => $mission,
+        return $this->renderForm('gestionstock/demande/delete.html.twig', [
+            'demande' => $demande,
             'form' => $form,
         ]);
     }

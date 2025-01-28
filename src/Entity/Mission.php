@@ -56,8 +56,7 @@ class Mission
     #[ORM\ManyToOne(inversedBy: 'missions')]
     private ?MoyenTransport $moyenTransport = null;
 
-    #[ORM\OneToMany(mappedBy: 'mission', targetEntity: Localite::class)]
-    private Collection $localites;
+
 
     #[ORM\ManyToMany(targetEntity: Employe::class, inversedBy: 'participant_mission')]
     private Collection $participants;
@@ -89,7 +88,6 @@ class Mission
 
     public function __construct()
     {
-        $this->localites = new ArrayCollection();
         $this->participants = new ArrayCollection();
         $this->pieceJointes = new ArrayCollection();
         $this->historique = new ArrayCollection();

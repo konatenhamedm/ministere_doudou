@@ -37,6 +37,9 @@ class LigneMission
     #[ORM\Column]
     private ?int $nbreJours = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lignemission')]
+    private ?Village $village = null;
+
 
     public function __construct()
     {
@@ -130,6 +133,18 @@ class LigneMission
     public function setNbreJours(int $nbreJours): static
     {
         $this->nbreJours = $nbreJours;
+
+        return $this;
+    }
+
+    public function getVillage(): ?Village
+    {
+        return $this->village;
+    }
+
+    public function setVillage(?Village $village): static
+    {
+        $this->village = $village;
 
         return $this;
     }

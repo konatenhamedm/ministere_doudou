@@ -17,7 +17,29 @@ framework:
                    valider:
                        from: en_cours
                        to: termine
-                  
+
+           Demande:
+                type: 'state_machine' # or 'state_machine'
+                audit_trail:
+                    enabled: true
+                marking_store:
+                    type: 'method'
+                    property: 'etat'            
+                supports:
+                    - App\Entity\Demande
+                initial_marking: en_cours
+                places:
+                    - en_cours
+                    - valider
+                    - livree
+                transitions:
+                    valider:
+                        from: en_cours
+                        to: valider
+                    livraison:
+                        from: valider
+                        to: livree
+
 #         dossier:
 #             type: 'workflow' # or 'state_machine'
 #             audit_trail:

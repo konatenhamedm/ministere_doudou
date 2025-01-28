@@ -73,7 +73,8 @@ class LigneMissionType extends AbstractType
             //         , 'format' => 'dd/MM/yyyy'
             //         , 'attr' => ['autocomplete' => 'off', 'class' => 'datepicker date-fin-localite'],
             //     ])
-            ->add('localite'
+            ->add(
+            'village'
             , EntityType::class
                 , [
                     'class' => Village::class
