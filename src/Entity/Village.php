@@ -27,7 +27,7 @@ class Village
     #[ORM\ManyToOne(inversedBy: 'villages')]
     private ?SousPrefecture $sousPrefecture = null;
 
-    #[ORM\OneToMany(mappedBy: 'village', targetEntity: LigneMission::class)]
+    #[ORM\OneToMany(mappedBy: 'village', targetEntity: LigneMission::class,cascade: ['remove', 'persist'])]
     private Collection $lignemission;
 
     public function __construct()

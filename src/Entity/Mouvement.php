@@ -6,6 +6,8 @@ use App\Repository\MouvementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: MouvementRepository::class)]
 class Mouvement
@@ -21,9 +23,12 @@ class Mouvement
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
-    #[ORM\OneToMany(mappedBy: 'mouvement', targetEntity: LigneMouvement::class)]
+    #[ORM\OneToMany(mappedBy: 'mouvement', targetEntity: LigneMouvement::class, cascade: ['persist', 'remove'])]
     private Collection $ligneMouvements;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: "create")]
+    private ?\DateTimeInterface $date = null;
     public function __construct()
     {
         $this->ligneMouvements = new ArrayCollection();
@@ -84,6 +89,20 @@ class Mouvement
                 $ligneMouvement->setMouvement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

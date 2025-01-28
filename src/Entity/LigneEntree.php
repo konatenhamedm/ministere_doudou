@@ -13,10 +13,10 @@ class LigneEntree
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneEntrees')]
+    #[ORM\ManyToOne(inversedBy: 'ligneEntrees', cascade: ['persist'])]
     private ?Entree $entree = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneEntrees')]
+    #[ORM\ManyToOne(inversedBy: 'ligneEntrees', cascade: ['persist'])]
     private ?Article $article = null;
 
     #[ORM\Column]

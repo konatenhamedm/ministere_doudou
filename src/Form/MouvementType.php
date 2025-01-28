@@ -2,15 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\LigneMouvement;
+use App\Entity\Mouvement;
 use App\Entity\Sens;
-use App\Entity\Sortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SortieType extends AbstractType
+class MouvementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -23,8 +24,8 @@ class SortieType extends AbstractType
                 'attr' =>
                 ['class' => 'has-select2 form-select']
             ])
-            ->add('lignesorties', CollectionType::class, [
-                'entry_type' => LigneSortieType::class,
+            ->add('ligneMouvements', CollectionType::class, [
+                'entry_type' => LigneMouvementType::class,
                 'entry_options' => [
                     'label' => false
                 ],
@@ -41,7 +42,7 @@ class SortieType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Sortie::class,
+            'data_class' => Mouvement::class,
         ]);
     }
 }

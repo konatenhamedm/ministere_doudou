@@ -26,19 +26,17 @@ class Demande
    
 
 
-    #[ORM\OneToMany(mappedBy: 'demande', targetEntity: LigneDemande::class)]
+    #[ORM\OneToMany(mappedBy: 'demande', targetEntity: LigneDemande::class, cascade: ['persist', 'remove'])]
     private Collection $ligneDemandes;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: "create")]
     private ?\DateTimeInterface $dateDemande = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-        #[ORM\JoinColumn(nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateValidation = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateLivraison = null;
 
 

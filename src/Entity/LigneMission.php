@@ -31,13 +31,13 @@ class LigneMission
     // #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     // private ?\DateTimeInterface $dateFinEffectiveLocalite = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneMissions',cascade: ['persist'],targetEntity: Mission::class)]
+    #[ORM\ManyToOne(inversedBy: 'ligneMissions', cascade: ['persist'])]
     private ?Mission $mission = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $nbreJours = null;
 
-    #[ORM\ManyToOne(inversedBy: 'lignemission')]
+    #[ORM\ManyToOne(inversedBy: 'lignemission', cascade: ['persist'])]
     private ?Village $village = null;
 
 

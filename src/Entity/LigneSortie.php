@@ -13,31 +13,23 @@ class LigneSortie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneSorties')]
-    private ?Sortie $sortie = null;
+ 
 
-    #[ORM\ManyToOne(inversedBy: 'ligneSorties')]
+    #[ORM\ManyToOne(inversedBy: 'ligneSorties', cascade: ['persist'])]
     private ?Article $article = null;
 
     #[ORM\Column]
     private ?int $quantite = null;
+
+    #[ORM\ManyToOne(inversedBy: 'lignesorties', cascade: ['persist'])]
+    private ?Sortie $sortie = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getSortie(): ?Sortie
-    {
-        return $this->sortie;
-    }
-
-    public function setSortie(?Sortie $sortie): static
-    {
-        $this->sortie = $sortie;
-
-        return $this;
-    }
+    
 
     public function getArticle(): ?Article
     {
@@ -59,6 +51,18 @@ class LigneSortie
     public function setQuantite(int $quantite): static
     {
         $this->quantite = $quantite;
+
+        return $this;
+    }
+
+    public function getSortie(): ?Sortie
+    {
+        return $this->sortie;
+    }
+
+    public function setSortie(?Sortie $sortie): static
+    {
+        $this->sortie = $sortie;
 
         return $this;
     }

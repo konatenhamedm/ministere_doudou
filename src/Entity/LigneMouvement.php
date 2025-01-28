@@ -13,10 +13,10 @@ class LigneMouvement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneMouvements')]
+    #[ORM\ManyToOne(inversedBy: 'ligneMouvements', cascade: ['persist'])]
     private ?Article $article = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneMouvements')]
+    #[ORM\ManyToOne(inversedBy: 'ligneMouvements', cascade: ['persist'])]
     private ?Mouvement $mouvement = null;
 
     #[ORM\Column]

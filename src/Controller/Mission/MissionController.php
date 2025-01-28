@@ -163,6 +163,7 @@ class MissionController extends BaseController
 
                             'actions' => [
                                 'edit' => [
+                                    'target' => '#exampleModalSizeSm2',
                                     'url' => $this->generateUrl('app_mission_mission_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',

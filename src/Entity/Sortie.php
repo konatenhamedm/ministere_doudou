@@ -6,6 +6,8 @@ use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -21,12 +23,20 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     private ?Sens $sens = null;
 
-    #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class)]
-    private Collection $ligneSorties;
+    // #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class, cascade: ['persist', 'remove'])]
+    // private Collection $ligneSorties;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: "create")]
+    private ?\DateTimeInterface $date = null;
+
+    #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class, cascade: ['persist', 'remove'])]
+    private Collection $lignesorties;
 
     public function __construct()
     {
-        $this->ligneSorties = new ArrayCollection();
+        // $this->ligneSorties = new ArrayCollection();
+        $this->lignesorties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,30 +68,44 @@ class Sortie
         return $this;
     }
 
+   
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, LigneSortie>
      */
-    public function getLigneSorties(): Collection
+    public function getLignesorties(): Collection
     {
-        return $this->ligneSorties;
+        return $this->lignesorties;
     }
 
-    public function addLigneSorty(LigneSortie $ligneSorty): static
+    public function addLignesorty(LigneSortie $lignesorty): static
     {
-        if (!$this->ligneSorties->contains($ligneSorty)) {
-            $this->ligneSorties->add($ligneSorty);
-            $ligneSorty->setSortie($this);
+        if (!$this->lignesorties->contains($lignesorty)) {
+            $this->lignesorties->add($lignesorty);
+            $lignesorty->setSortie($this);
         }
 
         return $this;
     }
 
-    public function removeLigneSorty(LigneSortie $ligneSorty): static
+    public function removeLignesorty(LigneSortie $lignesorty): static
     {
-        if ($this->ligneSorties->removeElement($ligneSorty)) {
+        if ($this->lignesorties->removeElement($lignesorty)) {
             // set the owning side to null (unless already changed)
-            if ($ligneSorty->getSortie() === $this) {
-                $ligneSorty->setSortie(null);
+            if ($lignesorty->getSortie() === $this) {
+                $lignesorty->setSortie(null);
             }
         }
 

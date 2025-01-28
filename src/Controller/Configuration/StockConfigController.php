@@ -37,17 +37,17 @@ class  StockConfigController extends BaseController
         [
                 'label' => 'ENTREES STOCK',
                 'icon' => 'bi bi-list',
-                'href' => $this->generateUrl('app_reunion_reunion_index')
+                'href' => $this->generateUrl('app_gestionstock_entree_index')
             ],
             [
                 'label' => 'SORTIES STOCK',
                 'icon' => 'bi bi-list',
-                'href' => $this->generateUrl('app_reunion_reunion_index')
+                'href' => $this->generateUrl('app_gestionstock_sortie_index')
             ],
             [
                 'label' => 'ETAT STOCK',
                 'icon' => 'bi bi-list',
-                'href' => $this->generateUrl('app_reunion_reunion_index')
+                'href' => $this->generateUrl('app_gestionstock_etat_index')
             ],
 
 

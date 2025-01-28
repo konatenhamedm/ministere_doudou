@@ -29,16 +29,16 @@ class Mission
     // #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_creation_mission")]
     // private ?\DateTimeInterface $dateCreationMission = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_pretuve")]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_pretuve", nullable: true)]
     private ?\DateTimeInterface $dateDebutPrevue = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_pretuve")]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_pretuve", nullable: true)]
     private ?\DateTimeInterface $dateFinPrevue = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_effective")]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_effective", nullable: true)]
     private ?\DateTimeInterface $dateDebutEffective = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_effective")]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_effective", nullable: true)] 
     private ?\DateTimeInterface $dateFinEffective = null;
 
     #[ORM\Column(length: 255,name: "montant_participant_mission")]
@@ -80,7 +80,7 @@ class Mission
     #[ORM\Column]
     private array $options = [];
 
-    #[ORM\OneToMany(mappedBy: 'mission', targetEntity: LigneMission::class)]
+    #[ORM\OneToMany(mappedBy: 'mission', targetEntity: LigneMission::class,cascade: ['persist', 'remove'])]
     private Collection $ligneMissions;
 
     #[ORM\Column(length: 255)]

@@ -143,6 +143,7 @@ class DemandeController extends BaseController
 
                             'actions' => [
                                 'edit' => [
+                                    'target' => '#exampleModalSizeSm2',
                                     'url' => $this->generateUrl('app_gestionstock_demande_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',
@@ -194,8 +195,8 @@ class DemandeController extends BaseController
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
         $demande = new Demande();
-        // $ligneDemandes = new LigneDemande();
-        // $demande->addLigneDemande($ligneDemandes);
+        $ligneDemandes = new LigneDemande();
+        $demande->addLigneDemande($ligneDemandes);
         $form = $this->createForm(DemandeType::class, $demande, [
             'method' => 'POST',
             'action' => $this->generateUrl('app_gestionstock_demande_new')

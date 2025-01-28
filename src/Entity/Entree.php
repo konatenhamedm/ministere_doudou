@@ -6,6 +6,8 @@ use App\Repository\EntreeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: EntreeRepository::class)]
 class Entree
@@ -21,8 +23,13 @@ class Entree
     #[ORM\ManyToOne(inversedBy: 'entrees')]
     private ?Sens $sens = null;
 
-    #[ORM\OneToMany(mappedBy: 'entree', targetEntity: LigneEntree::class)]
+    #[ORM\OneToMany(mappedBy: 'entree', targetEntity: LigneEntree::class, cascade: ['persist', 'remove'])]
     private Collection $ligneEntrees;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: "create")]
+    private ?\DateTimeInterface $date = null;
+
 
     public function __construct()
     {
@@ -87,4 +94,19 @@ class Entree
 
         return $this;
     }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+   
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
 }

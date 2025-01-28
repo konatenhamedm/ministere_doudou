@@ -1,8 +1,8 @@
-{% extends 'base-layout.html.twig' %}
+{# {% extends 'base-layout.html.twig' %}
 
 {% block title %}Liste des entrees{% endblock %}
 {% block header %}entrees{% endblock %}
-{% block breadcrumb %}{% endblock %}
+{% block breadcrumb %}{% endblock %} #}
 {% block body %}
 <div class="card shadow-sm">
     <div class="card-header card-header-sm">
@@ -10,7 +10,7 @@
         <div class="card-toolbar">
             {% if permition in ["CR","CRU","CRUD"] %}
             <a href="{{ path('app_gestionstock_entree_new') }}" class="btn btn-main btn-sm"  
-                data-bs-toggle="modal" data-bs-target="#exampleModalSizeLg2">
+                data-bs-toggle="modal" data-bs-target="#exampleModalSizeSm2">
                 <i class="bi bi-plus-square text-light"></i>
                 Nouveau
             </a>

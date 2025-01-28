@@ -15,21 +15,19 @@ class LigneDemande
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneDemandes')]
+    #[ORM\ManyToOne(inversedBy: 'ligneDemandes', cascade: ['persist'])]
     private ?Demande $demande = null;
 
     #[ORM\Column]
     private ?int $quantiteDemandee = null;
 
-    #[ORM\Column]
-    #[ORM\JoinColumn(name: 'quantiteValidee', referencedColumnName: 'quantiteValidee', nullable: true)]
+    #[ORM\Column(nullable: true)]
     private ?int $quantiteValidee = null;
 
-    #[ORM\Column]
-    #[ORM\JoinColumn(name: 'quantiteRecue', referencedColumnName: 'quantiteRecue', nullable: true)]
+    #[ORM\Column(nullable: true)]
     private ?int $quantiteRecue = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Lignedemande')]
+    #[ORM\ManyToOne(inversedBy: 'Lignedemande', cascade: ['persist'])]
     private ?Article $article = null;
 
 
