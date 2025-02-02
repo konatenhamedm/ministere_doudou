@@ -6,6 +6,9 @@ use App\Entity\Demande;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,6 +16,7 @@ class DemandeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $etat = $options['etat'];
         $builder
             ->add('reference')
             ->add('libelle')
@@ -47,6 +51,26 @@ class DemandeType extends AbstractType
 
         ])
         ;
+
+
+        // if ($etat == "create") {
+        //     $builder->add('justification', HiddenType::class, [
+        //         'label' => ' ',
+        //         "required" => false,
+        //         'attr' => ['readonly' => true, 'hidden' => true]
+        //     ]);
+        // }
+
+        if ($etat == "en_cours") {
+            $builder
+                ->add('valider', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider btn-sm ']]);
+        }
+
+        if ($etat == "valider") {
+            $builder
+                ->add('valider', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider btn-sm ']]);
+        }
+          
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -54,5 +78,6 @@ class DemandeType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Demande::class,
         ]);
+        $resolver->setRequired('etat');
     }
 }

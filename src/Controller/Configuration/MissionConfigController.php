@@ -112,7 +112,7 @@ class  MissionConfigController extends BaseController
                 [
                     'label' => 'Validées',
                     'id' => 'param_valide',
-                    'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'valide'])
+                    'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'termine'])
                 ],
 
              
@@ -125,7 +125,7 @@ class  MissionConfigController extends BaseController
                 [
                     'label' => 'Finalisées',
                     'id' => 'param_finalise',
-                    'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'finalise'])
+                    'href' => $this->generateUrl('app_config_mission_index', ['etat' => 'termine'])
               
                 ],
             ]

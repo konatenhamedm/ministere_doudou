@@ -21,6 +21,24 @@ class DemandeRepository extends ServiceEntityRepository
         parent::__construct($registry, Demande::class);
     }
 
+
+    public function add(Demande $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Demande $entity, bool $flush = false): void
+    {
+        $this->getEntityManager->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager->flush();
+        }
+    }
 //    /**
 //     * @return Demande[] Returns an array of Demande objects
 //     */

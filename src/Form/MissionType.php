@@ -14,6 +14,8 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +28,7 @@ class MissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
-
+        $etat = $options['etat'];
      
         $builder
             // ->add('objetMission')
@@ -196,6 +198,57 @@ class MissionType extends AbstractType
         //             }
         //         }
         //         });
+
+        if($etat == "create"){
+            $builder->add('justification', HiddenType::class, [
+                'label' => ' ',
+                "required" => false,
+                'attr' => ['readonly' => true, 'hidden' => true]
+            ]);
+      
+          }
+
+        if ($etat == "en_cours") {
+            $builder->add('justification', TextareaType::class, [
+                'label' => 'Commentaire',
+                "required" => false,
+                'attr' => ['readonly' => false, ]
+            ])
+            ->add('valider', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider btn-sm ']]);
+        }
+
+
+        // if ($etat == 'en_cours') {
+        //     $builder->add('justification', TextareaType::class, [
+        //         'label' => 'La raison du rejet du rapport',
+        //         'attr' => ['readonly' => true]
+        //     ])
+        //         // ->add('rejeter', SubmitType::class, ['label' => "Rejeter", 'attr' => ['class' => 'btn btn-main btn-ajax rejeter invisible ']])
+        //         ->add('valider', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider  ']]);
+        // }
+
+
+        // if ($etat == 'en_cours') {
+        //     $builder->add('justification', TextareaType::class, [
+        //         'label' => ' ',
+        //         "required" => false,
+        //         'attr' => ['readonly' => true, 'hidden' => true]
+        //     ])
+        //         ->add('accorder', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider invisible ']])
+        //         ->add('rejeter', SubmitType::class, ['label' => "Rejeter", 'attr' => ['class' => 'btn btn-main btn-ajax rejeter invisible']]);
+        // }
+
+
+
+        // if ($etat == 'en_cours') {
+        //     $builder->add('justification', HiddenType::class, [
+        //         'label' => 'la cause du rejet du rapport',
+        //         "required" => false,
+        //         'attr' => ['readonly' => false]
+        //     ])
+        //         ->add('accorder', SubmitType::class, ['label' => 'Valider', 'attr' => ['class' => 'btn btn-main btn-ajax valider ']]);
+        //     // ->add('rejeter', SubmitType::class, ['label' => "Rejeter", 'attr' => ['class' => 'btn btn-main btn-ajax rejeter ']]);
+        // }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -210,5 +263,7 @@ class MissionType extends AbstractType
         $resolver->setRequired('doc_options');
         $resolver->setRequired('doc_required');
         $resolver->setRequired(['validation_groups']);
+        $resolver->setRequired('etat');
+
     }
 }

@@ -21,6 +21,24 @@ class DiligenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Diligence::class);
     }
 
+    public function add(Diligence $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Diligence $entity, bool $flush = false): void
+    {
+        $this->getEntityManager->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager->flush();
+        }
+    }
+
 //    /**
 //     * @return Diligence[] Returns an array of Diligence objects
 //     */

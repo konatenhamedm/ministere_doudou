@@ -1,0 +1,81 @@
+{% block page_content %}
+{% form_theme form 'widget/fields-block.html.twig' %}
+{% from '_macros/ligne_dossiers.html.twig' import prototype_ligne_dossiers %}
+
+
+
+<div class="p-0">
+    {{ include('_includes/ajax/response.html.twig') }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(form.workfow) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.libelle) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.dateCreation) }}
+        </div>
+        <div class="col-md-12">
+        
+            {{ form_row(form.description) }}
+       
+        </div>
+    
+    </div>
+  
+    <div class="p-8">
+        {{ prototype_ligne_dossiers(form) }}
+    </div>
+
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-main btn-ajax btn-sm"><span
+                        class="spinner-border d-none  spinner-ajax spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Valider saisie</button>
+        
+            </div>
+        </div>
+</div>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block java %}
+<script>
+
+    $(function () {
+        $('.has-select2').select2();
+        $('.no-auto').each(function () {
+            const $this = $(this);
+            const $id = $('#' + $this.attr('id'));
+            init_date_picker($id, 'down', (start, e) => {
+                //$this.val(start.format('DD/MM/YYYY'));
+            }, null, null, false);
+
+            $id.on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
+            });
+        });
+        init_select2('select');
+        $('.has-select2').select2();
+    });
+
+     function enMajuscule(str) {
+            return str.split(/\s+/).map(s => s.charAt(0).toUpperCase() + s.substring(1).toLowerCase()).join(" ");
+        }
+
+        $("#exampleModalSizeSm2").find('#dossier_workfow').on('keyup', function (event) {
+
+            var $workfow = $(this);
+            $workfow.val(enMajuscule($workfow.val()));
+        });
+
+    $(function () {
+        init_select2('select', null, '.content-doc');
+    });
+   $("#exempleModalSizeSm2").find()
+   
+</script>
+{% endblock %}

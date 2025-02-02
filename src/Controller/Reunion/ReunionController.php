@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\BaseController;
+use App\Entity\OrdreJour;
 use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/ads/reunion/reunion')]
@@ -161,7 +162,10 @@ const INDEX_ROOT_NAME = 'app_reunion_reunion_index';
     #[Route('/new', name: 'app_reunion_reunion_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
 {
+
 $reunion = new Reunion();
+$ordrejOur = new OrdreJour();
+$reunion->addPoint($ordrejOur);
 $form = $this->createForm(ReunionType::class, $reunion, [
 'method' => 'POST',
 'action' => $this->generateUrl('app_reunion_reunion_new')

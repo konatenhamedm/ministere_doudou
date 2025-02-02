@@ -28,37 +28,36 @@ class Reunion
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $heureFin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reunions')]
+    #[ORM\ManyToOne(inversedBy: 'reunions', cascade: ['persist'])]
     private ?Salle $salle = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reunions')]
-    private ?OrdreJour $points = null;
 
-    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Employe::class)]
+
+    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Employe::class, cascade: ['persist', 'remove'])]
     private Collection $participants;
 
-    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Presence::class)]
-    private Collection $presences;
 
-    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Rapportage::class)]
-    private Collection $rapportages;
+    // #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Rapportage::class,cascade: ['persist', 'remove'])]
+    // private Collection $rapportages;
 
-    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Diligence::class)]
-    private Collection $diligences;
+    // #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: Diligence::class,cascade: ['persist', 'remove'])]
+    // private Collection $diligences;
 
-    #[ORM\ManyToOne(inversedBy: 'reunions')]
+    #[ORM\ManyToOne(inversedBy: 'reunions',cascade: ['persist'])]
     private ?Employe $president = null;
 
-    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: HistoriqueReunion::class)]
+    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: HistoriqueReunion::class,cascade: ['persist', 'remove'])]
     private Collection $historiqueReunions;
+
+    #[ORM\OneToMany(mappedBy: 'reunion', targetEntity: OrdreJour::class, cascade: ['persist', 'remove'])]
+    private Collection $points;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->presences = new ArrayCollection();
-        $this->rapportages = new ArrayCollection();
-        $this->diligences = new ArrayCollection();
-        $this->historiqueReunions = new ArrayCollection();
+        // $this->diligences = new ArrayCollection();
+        // $this->historiqueReunions = new ArrayCollection();
+        $this->points = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,17 +125,7 @@ class Reunion
         return $this;
     }
 
-    public function getPoints(): ?OrdreJour
-    {
-        return $this->points;
-    }
 
-    public function setPoints(?OrdreJour $points): static
-    {
-        $this->points = $points;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Employe>
@@ -168,95 +157,67 @@ class Reunion
         return $this;
     }
 
-    /**
-     * @return Collection<int, Presence>
-     */
-    public function getPresences(): Collection
-    {
-        return $this->presences;
-    }
+   
 
-    public function addPresence(Presence $presence): static
-    {
-        if (!$this->presences->contains($presence)) {
-            $this->presences->add($presence);
-            $presence->setReunion($this);
-        }
+    // /**
+    //  * @return Collection<int, Rapportage>
+    //  */
+    // public function getRapportages(): Collection
+    // {
+    //     return $this->rapportages;
+    // }
 
-        return $this;
-    }
+    // public function addRapportage(Rapportage $rapportage): static
+    // {
+    //     if (!$this->rapportages->contains($rapportage)) {
+    //         $this->rapportages->add($rapportage);
+    //         $rapportage->setReunion($this);
+    //     }
 
-    public function removePresence(Presence $presence): static
-    {
-        if ($this->presences->removeElement($presence)) {
-            // set the owning side to null (unless already changed)
-            if ($presence->getReunion() === $this) {
-                $presence->setReunion(null);
-            }
-        }
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function removeRapportage(Rapportage $rapportage): static
+    // {
+    //     if ($this->rapportages->removeElement($rapportage)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($rapportage->getReunion() === $this) {
+    //             $rapportage->setReunion(null);
+    //         }
+    //     }
 
-    /**
-     * @return Collection<int, Rapportage>
-     */
-    public function getRapportages(): Collection
-    {
-        return $this->rapportages;
-    }
+    //     return $this;
+    // }
 
-    public function addRapportage(Rapportage $rapportage): static
-    {
-        if (!$this->rapportages->contains($rapportage)) {
-            $this->rapportages->add($rapportage);
-            $rapportage->setReunion($this);
-        }
+    // /**
+    //  * @return Collection<int, Diligence>
+    //  */
+    // public function getDiligences(): Collection
+    // {
+    //     return $this->diligences;
+    // }
 
-        return $this;
-    }
+    // public function addDiligence(Diligence $diligence): static
+    // {
+    //     if (!$this->diligences->contains($diligence)) {
+    //         $this->diligences->add($diligence);
+    //         $diligence->setReunion($this);
+    //     }
 
-    public function removeRapportage(Rapportage $rapportage): static
-    {
-        if ($this->rapportages->removeElement($rapportage)) {
-            // set the owning side to null (unless already changed)
-            if ($rapportage->getReunion() === $this) {
-                $rapportage->setReunion(null);
-            }
-        }
+    //     return $this;
+    // }
 
-        return $this;
-    }
+    // public function removeDiligence(Diligence $diligence): static
+    // {
+    //     if ($this->diligences->removeElement($diligence)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($diligence->getReunion() === $this) {
+    //             $diligence->setReunion(null);
+    //         }
+    //     }
 
-    /**
-     * @return Collection<int, Diligence>
-     */
-    public function getDiligences(): Collection
-    {
-        return $this->diligences;
-    }
-
-    public function addDiligence(Diligence $diligence): static
-    {
-        if (!$this->diligences->contains($diligence)) {
-            $this->diligences->add($diligence);
-            $diligence->setReunion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDiligence(Diligence $diligence): static
-    {
-        if ($this->diligences->removeElement($diligence)) {
-            // set the owning side to null (unless already changed)
-            if ($diligence->getReunion() === $this) {
-                $diligence->setReunion(null);
-            }
-        }
-
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getPresident(): ?Employe
     {
@@ -294,6 +255,36 @@ class Reunion
             // set the owning side to null (unless already changed)
             if ($historiqueReunion->getReunion() === $this) {
                 $historiqueReunion->setReunion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrdreJour>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(OrdreJour $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setReunion($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(OrdreJour $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getReunion() === $this) {
+                $point->setReunion(null);
             }
         }
 

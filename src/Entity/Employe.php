@@ -87,6 +87,9 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Affectation::class)]
     private Collection $affectations;
 
+    #[ORM\OneToMany(mappedBy: 'responsable', targetEntity: LigneReponsableDossier::class)]
+    private Collection $ligneReponsableDossiers;
+
 
   
 
@@ -99,6 +102,7 @@ class Employe
         $this->reunions = new ArrayCollection();
         $this->infoRapportages = new ArrayCollection();
         $this->affectations = new ArrayCollection();
+        $this->ligneReponsableDossiers = new ArrayCollection();
     }
 
 
@@ -486,6 +490,36 @@ class Employe
             // set the owning side to null (unless already changed)
             if ($affectation->getEmploye() === $this) {
                 $affectation->setEmploye(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneReponsableDossier>
+     */
+    public function getLigneReponsableDossiers(): Collection
+    {
+        return $this->ligneReponsableDossiers;
+    }
+
+    public function addLigneReponsableDossier(LigneReponsableDossier $ligneReponsableDossier): static
+    {
+        if (!$this->ligneReponsableDossiers->contains($ligneReponsableDossier)) {
+            $this->ligneReponsableDossiers->add($ligneReponsableDossier);
+            $ligneReponsableDossier->setResponsable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneReponsableDossier(LigneReponsableDossier $ligneReponsableDossier): static
+    {
+        if ($this->ligneReponsableDossiers->removeElement($ligneReponsableDossier)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneReponsableDossier->getResponsable() === $this) {
+                $ligneReponsableDossier->setResponsable(null);
             }
         }
 

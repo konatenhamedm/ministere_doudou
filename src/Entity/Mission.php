@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 #[ORM\Entity(repositoryClass: MissionRepository::class)]
 class Mission
@@ -83,8 +85,11 @@ class Mission
     #[ORM\OneToMany(mappedBy: 'mission', targetEntity: LigneMission::class,cascade: ['persist', 'remove'])]
     private Collection $ligneMissions;
 
-    #[ORM\Column(length: 255)]
-    private ?string $etat = 'en_cours';
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $etat = 'en_cours';
+
+    #[ORM\Column(nullable: true, type: Types::TEXT)]
+    private ?string $justification = null;
 
     public function __construct()
     {
@@ -418,6 +423,19 @@ class Mission
     public function setEtat(string $etat): static
     {
         $this->etat = $etat;
+
+        return $this;
+    }
+
+
+    public function getJustification(): ?string
+    {
+        return $this->justification;
+    }
+
+    public function setJustification(string $justification): self
+    {
+        $this->justification = $justification;
 
         return $this;
     }

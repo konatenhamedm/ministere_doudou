@@ -1,0 +1,44 @@
+
+{% macro ligne_dossiers(colonne) %}
+
+
+    <tr class="row-colonne even pointer table-light">
+         <td width="40%" class="p-2">
+
+            <div style="display:non" class="field-matiere">{{ form_widget(colonne.LigneEtape) }}</div>
+{#             <div style="display:non" class="field-matiere">{{ colonne.document_type_client.vars.value }} </div>
+             #}
+        </td>
+         <td width="40%" class="p-2">
+         
+            <div style="display:no " class="field-matiere">{{ form_widget(colonne.responsable) }}</div>
+        </td>
+       
+    
+        
+    </tr>
+{% endmacro  %}
+
+
+{% macro prototype_ligne_dossiers(form) %}
+    <div class="list-colonne"  data-prototype="{{ _self.ligne_dossiers(form.ligneReponsableDossier.vars.prototype)|e }}"></div>
+    
+    <table class="table table-bordered table-custom">
+        <thead class="thead-dark">
+                    <tr width="100%" style="border: 0px !important;">
+                        <th colspan="4" class="p-2 text-center text-bold text-uppercase">Liste des etapes </th>
+                    </tr>
+            <tr>
+                <th width="50%" class="p-2">Etape</th>
+                <th width="40%" class="p-2">Responsable</th>
+               
+                <th></th>
+            </tr>
+        </thead>
+        <tbody  class="column-container proto-container" data-childclass=""">
+            {% for item in form.ligneReponsableDossier %}
+                {{ _self.ligne_dossiers(item|e) }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}

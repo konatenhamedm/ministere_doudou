@@ -20,6 +20,7 @@ use App\Controller\BaseController;
 use App\Entity\LigneDemande;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 #[Route('/ads/gestionstock/demande')]
 class DemandeController extends BaseController
@@ -40,7 +41,7 @@ class DemandeController extends BaseController
         $table = $dataTableFactory->create()
             ->add('reference', TextColumn::class, ['label' => 'Reference'])
             ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
-            ->add('dateDemande', DateTimeColumn::class, ['label' => 'Date de demande'])
+            ->add('dateDemande', DateTimeColumn::class, ['label' => 'Date de demande', 'format' => 'd/m/Y'])
             // ->add('dateValidation')
             // ->add('dateLivraison')
             ->createAdapter(ORMAdapter::class, [
@@ -55,10 +56,10 @@ class DemandeController extends BaseController
                        
                         $req->andWhere("d.etat =:etat")
                             ->setParameter('etat', "en_cours");
-                    } elseif ($etat == 'valide') {
+                    } elseif ($etat == 'valider') {
                         $req->andWhere("d.etat =:etat")
-                            ->setParameter('etat', "valide");
-                    } elseif ($etat == 'livree') {
+                            ->setParameter('etat', "valider ");
+                    } elseif ($etat == 'livre') {
                     $req->andWhere("d.etat =:etat")
                         ->setParameter('etat', "livre");
                 }
@@ -69,6 +70,23 @@ class DemandeController extends BaseController
 
         if ($permission != null) {
             $renders = [
+                'workflow_validation' =>  new ActionRender(function () use ($permission) {
+                    if ($permission == 'R') {
+                        return false;
+                    } elseif ($permission == 'RD') {
+                        return false;
+                    } elseif ($permission == 'RU') {
+                        return true;
+                    } elseif ($permission == 'RUD') {
+                        return true;
+                    } elseif ($permission == 'CRU') {
+                        return true;
+                    } elseif ($permission == 'CR') {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }),
                 'edit' => new ActionRender(function () use ($permission) {
                     if ($permission == 'R') {
                         return false;
@@ -142,8 +160,17 @@ class DemandeController extends BaseController
                             'target' => '#exampleModalSizeSm2',
 
                             'actions' => [
+                             
+
+                                'workflow_validation' => [
+                                    'url' => $this->generateUrl('app_gestionstock_demande_workflow', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon%  bi bi-arrow-repeat',
+                                    'attrs' => ['class' => 'btn-danger'],
+                                    'render' => $renders['workflow_validation']
+                                ],
                                 'edit' => [
-                                    'target' => '#exampleModalSizeSm2',
+                                    
                                     'url' => $this->generateUrl('app_gestionstock_demande_edit', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon% bi bi-pen',
@@ -199,6 +226,7 @@ class DemandeController extends BaseController
         $demande->addLigneDemande($ligneDemandes);
         $form = $this->createForm(DemandeType::class, $demande, [
             'method' => 'POST',
+            'etat' => 'en_cours',
             'action' => $this->generateUrl('app_gestionstock_demande_new')
         ]);
         $form->handleRequest($request);
@@ -261,6 +289,7 @@ class DemandeController extends BaseController
 
         $form = $this->createForm(DemandeType::class, $demande, [
             'method' => 'POST',
+            'etat' => 'en_cours',
             'action' => $this->generateUrl('app_gestionstock_demande_edit', [
                 'id' => $demande->getId()
             ])
@@ -357,4 +386,108 @@ class DemandeController extends BaseController
             'form' => $form,
         ]);
     }
+
+    #[Route('/{id}/workflow/validation', name: 'app_gestionstock_demande_workflow', methods: ['GET', 'POST'])]
+    public function workflow(Request $request, Demande $demande, DemandeRepository $demandeRepository, EntityManagerInterface $entityManager, FormError $formError): Response
+    {
+        $etat =  $demande->getEtat();
+        // $mission = $missionRepository->find(1);
+        // dd($mission); // Remplacez par un ID existant
+      
+        $form = $this->createForm(DemandeType::class, $demande, [
+            'method' => 'GET',
+            'etat' => $etat,
+            // 'doc_options' => [
+            //     'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
+            //     'attrs' => ['class' => 'filestyle'],
+            // ],
+            // 'validation_groups' => $validationGroups,
+            'action' => $this->generateUrl('app_gestionstock_demande_workflow', [
+                'id' =>  $demande->getId()
+            ])
+        ]);
+
+
+        $data = null;
+        $statutCode = Response::HTTP_OK;
+
+        $isAjax = $request->isXmlHttpRequest();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $response = [];
+            $redirect = $this->generateUrl('app_config_stocks_index');
+            $workflow = $this->workflow->get($demande, 'demande');
+
+            if ($form->isValid()) {
+                if ($form->getClickedButton()->getName() === 'valider') {
+
+                    try {
+                        if ($workflow->can($demande, 'valider')) {
+                            $workflow->apply($demande, 'valider');
+
+                            $this->em->flush();
+                        }
+                     
+                            if ($workflow->can($demande, 'livraison')) {
+                                $workflow->apply($demande, 'livraison');
+
+                                $this->em->flush();
+                            
+                        }
+                    } catch (LogicException $e) {
+
+                        $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                    }
+                    $demandeRepository->add($demande, true);
+                } else {
+                    $demandeRepository->add($demande, true);
+                }
+
+                // if ($form->getClickedButton()->getName() === 'rejeter') {
+                //     try {
+                //         if ($workflow->can($audience, 'rejeter')) {
+                //             $workflow->apply($audience, 'rejeter');
+                //             $this->em->flush();
+                //         }
+                //     } catch (LogicException $e) {
+
+                //         $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                //     }
+                //     $audienceRepository->save($audience, true);
+                // } else {
+                //     $audienceRepository->save($audience, true);
+                // }
+
+                $data = true;
+                $message       = 'Opération effectuée avec succès';
+                $statut = 1;
+                $this->addFlash('success', $message);
+            } else {
+                $message = $formError->all($form);
+                $statut = 0;
+                $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+                if (!$isAjax) {
+                    $this->addFlash('warning', $message);
+                }
+            }
+
+
+            if ($isAjax) {
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
+            } else {
+                if ($statut == 1) {
+                    return $this->redirect($redirect, Response::HTTP_OK);
+                }
+            }
+        }
+
+        return $this->renderForm('gestionstock/demande/workflow.html.twig', [
+            'mission' => $demande,
+            'form' => $form,
+            'id' => $demande->getId(),
+            // 'etat' => json_encode($etat)
+        ]);
+    }
+
 }

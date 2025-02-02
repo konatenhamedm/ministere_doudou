@@ -57,7 +57,7 @@
         $(function() { 
               $('#grid_app_reunion_diligence').initDataTables({{ datatable_settings(datatable) }}, {
                   searching: true,
-                  ajaxUrl: "{{ path('app_reunion_diligence_index',{'etat': etat}) }}",
+                  ajaxUrl: "{{ path('app_config_diligence_index',{'etat': etat}) }}",
                   language: {
                       url: asset_base_path + "/js/i18n/French.json"
                   }

@@ -20,8 +20,15 @@ class Diligence
     #[ORM\Column(type: Types::TEXT)]
     private ?string $commentaireDiligence = null;
 
-    #[ORM\ManyToOne(inversedBy: 'diligences')]
-    private ?Reunion $reunion = null;
+    // #[ORM\ManyToOne(inversedBy: 'diligences', cascade: ['persist'])]
+    // private ?Reunion $reunion = null;
+
+
+    #[ORM\Column(length: 255)]
+    private ?string $etat = 'en_cours';
+
+    #[ORM\ManyToOne(inversedBy: 'diligences', cascade: ['persist'])]
+    private ?OrdreJour $points = null;
 
     public function getId(): ?int
     {
@@ -52,14 +59,38 @@ class Diligence
         return $this;
     }
 
-    public function getReunion(): ?Reunion
+    // public function getReunion(): ?Reunion
+    // {
+    //     return $this->reunion;
+    // }
+
+    // public function setReunion(?Reunion $reunion): static
+    // {
+    //     $this->reunion = $reunion;
+
+    //     return $this;
+    // }
+
+    public function getEtat(): ?string
     {
-        return $this->reunion;
+        return $this->etat;
     }
 
-    public function setReunion(?Reunion $reunion): static
+    public function setEtat(string $etat): static
     {
-        $this->reunion = $reunion;
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getPoints(): ?OrdreJour
+    {
+        return $this->points;
+    }
+
+    public function setPoints(?OrdreJour $points): static
+    {
+        $this->points = $points;
 
         return $this;
     }

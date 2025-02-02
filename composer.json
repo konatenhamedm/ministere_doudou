@@ -59,7 +59,7 @@
         "symfony/validator": "6.0.*",
         "symfony/var-dumper": "6.0.*",
         "symfony/web-link": "6.0.*",
-        "symfony/workflow": "^6.1",
+        "symfony/workflow": "6.0.*",
         "symfony/yaml": "6.0.*",
         "symfonycasts/reset-password-bundle": "*",
         "twig/extra-bundle": "^2.12|^3.0",

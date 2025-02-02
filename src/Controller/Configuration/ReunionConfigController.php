@@ -54,7 +54,7 @@ class  ReunionConfigController extends BaseController
             ]
         ]);
 
-        return $this->render('config/mission/index.html.twig', [
+        return $this->render('config/reunion/index.html.twig', [
             'modules' => $modules,
             'breadcrumb' => $breadcrumb,
             'module_name' => self::MODULE_NAME,
@@ -79,7 +79,7 @@ class  ReunionConfigController extends BaseController
                 [
                     'label' => 'En attente de validation',
                     'id' => 'param_attente',
-                    'href' => $this->generateUrl('app_reunion_diligence_index', ['etat' => 'en_cours'])
+                    'href' => $this->generateUrl('app_config_diligence_index', ['etat' => 'en_cours'])
                 ],
 
 
@@ -87,7 +87,7 @@ class  ReunionConfigController extends BaseController
                 [
                     'label' => 'Validées',
                     'id' => 'param_valide',
-                    'href' => $this->generateUrl('app_reunion_diligence_index', ['etat' => 'valide'])
+                    'href' => $this->generateUrl('app_config_diligence_index', ['etat' => 'termine'])
                 ],
 
                 
@@ -97,6 +97,6 @@ class  ReunionConfigController extends BaseController
         ];
 
 
-        return $this->render('config/mission/liste.html.twig', ['links' => $parametes[$module] ?? []]);
+        return $this->render('config/reunion/liste.html.twig', ['links' => $parametes[$module] ?? []]);
     }
 }

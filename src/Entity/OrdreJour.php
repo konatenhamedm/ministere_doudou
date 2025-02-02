@@ -18,20 +18,25 @@ class OrdreJour
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $libOrdreJour = null;
-
+    
     #[ORM\Column]
     private ?int $numOrdreJour = null;
 
-    #[ORM\OneToMany(mappedBy: 'points', targetEntity: Reunion::class)]
-    private Collection $reunions;
+   
 
-    #[ORM\OneToMany(mappedBy: 'point', targetEntity: Rapportage::class)]
-    private Collection $rapportages;
+    // #[ORM\OneToMany(mappedBy: 'point', targetEntity: Rapportage::class,cascade:['persist','remove'])]
+    // private Collection $rapportages;
+
+    #[ORM\ManyToOne(inversedBy: 'points', cascade: ['persist'])]
+    private ?Reunion $reunion = null;
+
+    #[ORM\OneToMany(mappedBy: 'points', targetEntity: Diligence::class, cascade: ['persist', 'remove'])]
+    private Collection $diligences;
 
     public function __construct()
     {
-        $this->reunions = new ArrayCollection();
-        $this->rapportages = new ArrayCollection();
+        // $this->rapportages = new ArrayCollection();
+        $this->diligences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,62 +66,74 @@ class OrdreJour
         $this->numOrdreJour = $numOrdreJour;
 
         return $this;
+    } 
+
+    // /**
+    //  * @return Collection<int, Rapportage>
+    //  */
+    // public function getRapportages(): Collection
+    // {
+    //     return $this->rapportages;
+    // }
+
+    // public function addRapportage(Rapportage $rapportage): static
+    // {
+    //     if (!$this->rapportages->contains($rapportage)) {
+    //         $this->rapportages->add($rapportage);
+    //         $rapportage->setPoint($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeRapportage(Rapportage $rapportage): static
+    // {
+    //     if ($this->rapportages->removeElement($rapportage)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($rapportage->getPoint() === $this) {
+    //             $rapportage->setPoint(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+    public function getReunion(): ?Reunion
+    {
+        return $this->reunion;
+    }
+
+    public function setReunion(?Reunion $reunion): static
+    {
+        $this->reunion = $reunion;
+
+        return $this;
     }
 
     /**
-     * @return Collection<int, Reunion>
+     * @return Collection<int, Diligence>
      */
-    public function getReunions(): Collection
+    public function getDiligences(): Collection
     {
-        return $this->reunions;
+        return $this->diligences;
     }
 
-    public function addReunion(Reunion $reunion): static
+    public function addDiligence(Diligence $diligence): static
     {
-        if (!$this->reunions->contains($reunion)) {
-            $this->reunions->add($reunion);
-            $reunion->setPoints($this);
+        if (!$this->diligences->contains($diligence)) {
+            $this->diligences->add($diligence);
+            $diligence->setPoints($this);
         }
 
         return $this;
     }
 
-    public function removeReunion(Reunion $reunion): static
+    public function removeDiligence(Diligence $diligence): static
     {
-        if ($this->reunions->removeElement($reunion)) {
+        if ($this->diligences->removeElement($diligence)) {
             // set the owning side to null (unless already changed)
-            if ($reunion->getPoints() === $this) {
-                $reunion->setPoints(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Rapportage>
-     */
-    public function getRapportages(): Collection
-    {
-        return $this->rapportages;
-    }
-
-    public function addRapportage(Rapportage $rapportage): static
-    {
-        if (!$this->rapportages->contains($rapportage)) {
-            $this->rapportages->add($rapportage);
-            $rapportage->setPoint($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRapportage(Rapportage $rapportage): static
-    {
-        if ($this->rapportages->removeElement($rapportage)) {
-            // set the owning side to null (unless already changed)
-            if ($rapportage->getPoint() === $this) {
-                $rapportage->setPoint(null);
+            if ($diligence->getPoints() === $this) {
+                $diligence->setPoints(null);
             }
         }
 

@@ -17,44 +17,47 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\BaseController;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 #[Route('/ads/reunion/diligence')]
 class DiligenceController extends BaseController
 {
-    const INDEX_ROOT_NAME = 'app_reunion_diligence_index';
+    const INDEX_ROOT_NAME = 'app_config_diligence_index';
 
 
-    #[Route('/{etat}/liste', name: 'app_reunion_diligence_index', methods: ['GET', 'POST'])]
+    #[Route('/{etat}/liste', name: 'app_config_diligence_index', methods: ['GET', 'POST'])]
     public function liste(Request $request, string $etat, DataTableFactory $dataTableFactory): Response
     {
 
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
     
         $table = $dataTableFactory->create()
-            // ->add('daterencontre', DateTimeColumn::class, [
-            //     'label' => 'Date de la rencontre',
-            //     "format" => 'd-m-Y'
-            // ])
-            // ->add('communaute', TextColumn::class, ['label' => 'Communauté', 'field' => 'co.libelle'])
-            // ->add('nomchef', TextColumn::class, ['label' => 'Nom du chef'])
-            // ->add('numero', TextColumn::class, ['label' => 'Numéro'])
-            // ->add('motif', TextColumn::class, ['label' => 'Motif'])
+            ->add('ordreJour', TextColumn::class, ['label' => 'Ordre du jour', 'field' => 'p.numOrdreJour'])
+            // ->add('ordreJour', TextColumn::class, ['label' => 'Action', 'field' => 'p.libOrdreJour'])
+
+            ->add('dateTraitementDiligence', DateTimeColumn::class, [
+                'label' => 'Date De Traitement',
+                "format" => 'd-m-Y'
+            ])
+   
+        
+            ->add('commentaireDiligence', TextColumn::class, ['label' => 'Commentaire'])
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Diligence::class,
                 'query' => function (QueryBuilder $req) use ($etat) {
-                    $req->select('d')
+                    $req->select('d','p')
                         ->from(Diligence::class, 'd')
-                        // ->leftJoin('a.communaute', 'co')
+                         ->Join('d.points', 'p')
                     ;
 
                     if ($etat == 'en_cours') {
                         $req->andWhere("d.etat =:etat")
                         ->setParameter('etat', "en_cours");
-                    } elseif ($etat == 'valider') {
+                    } elseif ($etat == 'termine') {
                         $req->andWhere("d.etat =:etat")
-                        ->setParameter('etat', "valider");
+                        ->setParameter('etat', "termine");
                     }
                 }
             ])
@@ -62,6 +65,23 @@ class DiligenceController extends BaseController
         if ($permission != null) {
 
             $renders = [
+                'workflow_validation' =>  new ActionRender(function () use ($permission) {
+                    if ($permission == 'R') {
+                        return false;
+                    } elseif ($permission == 'RD') {
+                        return false;
+                    } elseif ($permission == 'RU') {
+                        return true;
+                    } elseif ($permission == 'RUD') {
+                        return true;
+                    } elseif ($permission == 'CRU') {
+                        return true;
+                    } elseif ($permission == 'CR') {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }),
                 'edit' => new ActionRender(function () use ($permission) {
                     if ($permission == 'R') {
                         return false;
@@ -132,6 +152,15 @@ class DiligenceController extends BaseController
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
+                                'target' => '#exampleModalSizeSm2',
+
+                                'workflow_validation' => [
+                                    'url' => $this->generateUrl('app_reunion_diligence_workflow', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon%  bi bi-arrow-repeat',
+                                    'attrs' => ['class' => 'btn-danger'],
+                                    'render' => $renders['workflow_validation']
+                                ],
                                 'edit' => [
                                     'url' => $this->generateUrl('app_reunion_diligence_edit', ['id' => $value]),
                                     'ajax' => true,
@@ -185,6 +214,7 @@ class DiligenceController extends BaseController
         $diligence = new Diligence();
         $form = $this->createForm(DiligenceType::class, $diligence, [
             'method' => 'POST',
+            'etat' => 'en_cours',
             'action' => $this->generateUrl('app_reunion_diligence_new')
         ]);
         $form->handleRequest($request);
@@ -196,7 +226,7 @@ class DiligenceController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_reunion_diligence_index');
+            $redirect = $this->generateUrl('app_config_reunions_index');
 
 
             if ($form->isValid()) {
@@ -247,6 +277,7 @@ class DiligenceController extends BaseController
 
         $form = $this->createForm(DiligenceType::class, $diligence, [
             'method' => 'POST',
+            'etat' => 'en_cours',
             'action' => $this->generateUrl('app_reunion_diligence_edit', [
                 'id' => $diligence->getId()
             ])
@@ -262,7 +293,7 @@ class DiligenceController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_reunion_diligence_index');
+            $redirect = $this->generateUrl('app_config_reunions_index');
 
 
             if ($form->isValid()) {
@@ -318,7 +349,7 @@ class DiligenceController extends BaseController
             $entityManager->remove($diligence);
             $entityManager->flush();
 
-            $redirect = $this->generateUrl('app_reunion_diligence_index');
+            $redirect = $this->generateUrl('app_config_reunions_index');
 
             $message = 'Opération effectuée avec succès';
 
@@ -341,6 +372,104 @@ class DiligenceController extends BaseController
         return $this->renderForm('reunion/diligence/delete.html.twig', [
             'diligence' => $diligence,
             'form' => $form,
+        ]);
+    }
+
+
+    #[Route('/{id}/workflow/validation', name: 'app_reunion_diligence_workflow', methods: ['GET', 'POST'])]
+    public function workflow(Request $request, Diligence $diligence, DiligenceRepository $diligenceRepository, EntityManagerInterface $entityManager, FormError $formError): Response
+    {
+        $etat =  $diligence->getEtat();
+        // $mission = $missionRepository->find(1);
+        // dd($mission); // Remplacez par un ID existant
+        // $validationGroups = ['Default', 'FileRequired', 'oui'];
+        // $filePath = 'mission';
+        $form = $this->createForm(DiligenceType::class, $diligence, [
+            'method' => 'GET',
+            'etat' => $etat,
+            // 'doc_options' => [
+            //     'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
+            //     'attrs' => ['class' => 'filestyle'],
+            // ],
+            // 'validation_groups' => $validationGroups,
+            'action' => $this->generateUrl('app_reunion_diligence_workflow', [
+                'id' =>  $diligence->getId()
+            ])
+        ]);
+
+
+        $data = null;
+        $statutCode = Response::HTTP_OK;
+
+        $isAjax = $request->isXmlHttpRequest();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $response = [];
+            $redirect = $this->generateUrl('app_config_reunions_index');
+            $workflow = $this->workflow->get($diligence, 'diligence');
+
+            if ($form->isValid()) {
+                if ($form->getClickedButton()->getName() === 'valider') {
+
+                    try {
+                        if ($workflow->can($diligence, 'valider')) {
+                            $workflow->apply($diligence, 'valider');
+
+                            $this->em->flush();
+                        }
+                    } catch (LogicException $e) {
+
+                        $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                    }
+                    $diligenceRepository->add($diligence, true);
+                } else {
+                    $diligenceRepository->add($diligence, true);
+                }
+
+                // if ($form->getClickedButton()->getName() === 'rejeter') {
+                //     try {
+                //         if ($workflow->can($audience, 'rejeter')) {
+                //             $workflow->apply($audience, 'rejeter');
+                //             $this->em->flush();
+                //         }
+                //     } catch (LogicException $e) {
+
+                //         $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                //     }
+                //     $audienceRepository->save($audience, true);
+                // } else {
+                //     $audienceRepository->save($audience, true);
+                // }
+
+                $data = true;
+                $message       = 'Opération effectuée avec succès';
+                $statut = 1;
+                $this->addFlash('success', $message);
+            } else {
+                $message = $formError->all($form);
+                $statut = 0;
+                $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+                if (!$isAjax) {
+                    $this->addFlash('warning', $message);
+                }
+            }
+
+
+            if ($isAjax) {
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
+            } else {
+                if ($statut == 1) {
+                    return $this->redirect($redirect, Response::HTTP_OK);
+                }
+            }
+        }
+
+        return $this->renderForm('reunion/diligence/workflow.html.twig', [
+            'diligence' => $diligence,
+            'form' => $form,
+            'id' => $diligence->getId(),
+            // 'etat' => json_encode($etat)
         ]);
     }
 }

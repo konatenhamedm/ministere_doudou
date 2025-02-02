@@ -127,7 +127,7 @@ class  StockConfigController extends BaseController
                 [
                     'label' => 'Validées',
                     'id' => 'param_valide',
-                    'href' => $this->generateUrl('app_config_stock_index', ['etat' => 'valide'])
+                    'href' => $this->generateUrl('app_config_stock_index', ['etat' => 'valider'])
                 ],
 
                 [

@@ -13,6 +13,7 @@ use App\Entity\Mission;
 use App\Form\JutificationAudienceType;
 use App\Form\MissionType;
 use App\Repository\AudienceRepository;
+use App\Repository\MissionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +80,7 @@ class MissionController extends BaseController
                     if ($etat == 'en_cours') {
                         $req->andWhere("m.etat =:etat")
                             ->setParameter('etat', "en_cours");
-                    } elseif ($etat == 'valide') {
+                    } elseif ($etat == 'termine') {
                         $req->andWhere("m.etat =:etat")
                             ->setParameter('etat', "valide");
                     }
@@ -89,6 +90,23 @@ class MissionController extends BaseController
 
         if ($permission != null) {
             $renders = [
+                'workflow_validation' =>  new ActionRender(function () use ($permission) {
+                    if ($permission == 'R') {
+                        return false;
+                    } elseif ($permission == 'RD') {
+                        return false;
+                    } elseif ($permission == 'RU') {
+                        return true;
+                    } elseif ($permission == 'RUD') {
+                        return true;
+                    } elseif ($permission == 'CRU') {
+                        return true;
+                    } elseif ($permission == 'CR') {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }),
                 'edit' => new ActionRender(function () use ($permission) {
                     if ($permission == 'R') {
                         return false;
@@ -162,6 +180,15 @@ class MissionController extends BaseController
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
+                                'target' => '#exampleModalSizeSm2',
+
+                                'workflow_validation' => [
+                                    'url' => $this->generateUrl('app_mission_mission_workflow', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon%  bi bi-arrow-repeat',
+                                    'attrs' => ['class' => 'btn-danger'],
+                                    'render' => $renders['workflow_validation']
+                                ],
                                 'edit' => [
                                     'target' => '#exampleModalSizeSm2',
                                     'url' => $this->generateUrl('app_mission_mission_edit', ['id' => $value]),
@@ -222,6 +249,7 @@ class MissionController extends BaseController
         $filePath = 'mission';
         $form = $this->createForm(MissionType::class, $mission, [
             'method' => 'POST',
+            'etat'=> 'en_cours',
             'doc_options' => [
                 'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
                 'attrs' => ['class' => 'filestyle'],
@@ -291,6 +319,7 @@ class MissionController extends BaseController
         $filePath = 'mission';
         $form = $this->createForm(MissionType::class, $mission, [
             'method' => 'POST',
+            'etat' => 'en_cours',
             'doc_options' => [
                 'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
                 'attrs' => ['class' => 'filestyle'],
@@ -390,6 +419,103 @@ class MissionController extends BaseController
         return $this->renderForm('mission/mission/delete.html.twig', [
             'mission' => $mission,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}/workflow/validation', name: 'app_mission_mission_workflow', methods: ['GET', 'POST'])]
+    public function workflow(Request $request, Mission $mission, MissionRepository $missionRepository, EntityManagerInterface $entityManager, FormError $formError): Response
+    {
+        $etat =  $mission->getEtat();
+        // $mission = $missionRepository->find(1);
+        // dd($mission); // Remplacez par un ID existant
+        $validationGroups = ['Default', 'FileRequired', 'oui'];
+        $filePath = 'mission';
+        $form = $this->createForm(MissionType::class, $mission, [
+            'method' => 'GET',
+            'etat' => $etat,
+            'doc_options' => [
+                'uploadDir' => $this->getUploadDir(self::UPLOAD_PATH, true),
+                'attrs' => ['class' => 'filestyle'],
+            ],
+            'validation_groups' => $validationGroups,
+            'action' => $this->generateUrl('app_mission_mission_workflow', [
+                'id' =>  $mission->getId()
+            ])
+        ]);
+
+
+        $data = null;
+        $statutCode = Response::HTTP_OK;
+
+        $isAjax = $request->isXmlHttpRequest();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $response = [];
+            $redirect = $this->generateUrl('app_config_missions_index');
+            $workflow = $this->workflow->get($mission, 'mission');
+
+            if ($form->isValid()) {
+                if ($form->getClickedButton()->getName() === 'valider') {
+
+                    try {
+                        if ($workflow->can($mission, 'valider')) {
+                            $workflow->apply($mission, 'valider');
+                           
+                            $this->em->flush();
+                        }
+                    } catch (LogicException $e) {
+
+                        $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                    }
+                    $missionRepository->add($mission, true);
+                } else {
+                    $missionRepository->add($mission, true);
+                }
+
+                // if ($form->getClickedButton()->getName() === 'rejeter') {
+                //     try {
+                //         if ($workflow->can($audience, 'rejeter')) {
+                //             $workflow->apply($audience, 'rejeter');
+                //             $this->em->flush();
+                //         }
+                //     } catch (LogicException $e) {
+
+                //         $this->addFlash('danger', sprintf('No, that did not work: %s', $e->getMessage()));
+                //     }
+                //     $audienceRepository->save($audience, true);
+                // } else {
+                //     $audienceRepository->save($audience, true);
+                // }
+
+                $data = true;
+                $message       = 'Opération effectuée avec succès';
+                $statut = 1;
+                $this->addFlash('success', $message);
+            } else {
+                $message = $formError->all($form);
+                $statut = 0;
+                $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+                if (!$isAjax) {
+                    $this->addFlash('warning', $message);
+                }
+            }
+
+
+            if ($isAjax) {
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
+            } else {
+                if ($statut == 1) {
+                    return $this->redirect($redirect, Response::HTTP_OK);
+                }
+            }
+        }
+
+        return $this->renderForm('mission/mission/workflow.html.twig', [
+            'mission' => $mission,
+            'form' => $form,
+            'id' => $mission->getId(),
+            // 'etat' => json_encode($etat)
         ]);
     }
 }

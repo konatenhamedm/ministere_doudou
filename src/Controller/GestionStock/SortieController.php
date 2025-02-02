@@ -33,7 +33,7 @@ class SortieController extends BaseController
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
-            ->add('date', DateTimeColumn::class, ['label' => 'Date'])
+            ->add('date', DateTimeColumn::class, ['label' => 'Date','format' => 'd/m/Y'])
             ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Sortie::class,
