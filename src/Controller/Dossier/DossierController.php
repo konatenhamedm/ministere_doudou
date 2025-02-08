@@ -162,7 +162,7 @@ class DossierController extends BaseController
                                 'target' => '#exampleModalSizeSm2',
 
                                 'workflow_validation' => [
-                                    'url' => $this->generateUrl('app_mission_dossier_workflow', ['id' => $value]),
+                                    'url' => $this->generateUrl('app_dossier_dossier_workflow', ['id' => $value]),
                                     'ajax' => true,
                                     'icon' => '%icon%  bi bi-arrow-repeat',
                                     'attrs' => ['class' => 'btn-danger'],
@@ -221,22 +221,29 @@ class DossierController extends BaseController
     #[Route('/new', name: 'app_dossier_dossier_new', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function new(Request $request, EntityManagerInterface $entityManager,LigneReponsableDossierRepository $ligneReponsableDossiers, LigneEtapeRepository $ligneEtapeRepository, FormError $formError): Response
     {
-        $workflow = $request->query->get('workflow');
+        // $all = $request->query->all();
+        // $workflow = isset($all['workflow']) ? $all['workflow'] : null;
+        $all = $request->query->all();
+        $workflow = isset($all['dossier']['workfow']) ? $all['dossier']['workfow'] : null;
+
         $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workflow]);
+
+        $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workflow]);
+     
        $dossier = new Dossier();
         foreach ($ligneEtapes as $key=>$value) {
             $ligneReponsableDossiers = new LigneReponsableDossier();
             $ligneReponsableDossiers->setLigneEtape($value);
             $dossier->addLigneReponsableDossier($ligneReponsableDossiers);
         }
-       
+      
         $form = $this->createForm(DossierType::class, $dossier, [
-            'method' => 'POST',
+            'method' => 'GET',
             'etat' => 'en_cours',
             'action' => $this->generateUrl('app_dossier_dossier_new')
         ]);
         $form->handleRequest($request);
-
+    
         $data = null;
         $statutCode = Response::HTTP_OK;
 
@@ -244,9 +251,9 @@ class DossierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_dossier_dossier_index');
+            $redirect = $this->generateUrl('app_config_dossiers_index');
 
-
+            //dd($ligneEtapes);
             if ($form->isValid()) {
 
                 $entityManager->persist($dossier);
@@ -284,21 +291,22 @@ class DossierController extends BaseController
     }
 
 
-    #[Route('/new/load/{workflow}', name: 'app_dossier_dossier_new_load', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function newLoad(Request $request,$workflow, EntityManagerInterface $entityManager, LigneReponsableDossierRepository $ligneReponsableDossiers, LigneEtapeRepository $ligneEtapeRepository, FormError $formError): Response
+    #[Route('/new/load/{workfow}', name: 'app_dossier_dossier_new_load', methods: ['GET', 'POST'], options: ['expose' => true])]
+    public function newLoad(Request $request,$workfow, EntityManagerInterface $entityManager, LigneReponsableDossierRepository $ligneReponsableDossiers, LigneEtapeRepository $ligneEtapeRepository, FormError $formError): Response
     {
 
        
         $all = $request->query->all();
-
-        $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workflow]);
+        
+        $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workfow]);
+      //  dd($ligneEtapes);
         $dossier = new Dossier();
         foreach ($ligneEtapes as $key => $value) {
             $ligneReponsableDossiers = new LigneReponsableDossier();
             $ligneReponsableDossiers->setLigneEtape($value);
             $dossier->addLigneReponsableDossier($ligneReponsableDossiers);
         }
- 
+       
        // dd($validationGroups);
       $form = $this->createForm(DossierType::class, $dossier, [
             'method' => 'POST',
@@ -317,7 +325,7 @@ class DossierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_dossier_dossier_index');
+            $redirect = $this->generateUrl('app_config_dossiers_index');
 
 
             if ($form->isValid()) {
@@ -351,7 +359,7 @@ class DossierController extends BaseController
         return $this->renderForm('dossier/dossier/new_load.html.twig', [
             'dossier' => $dossier,
             'form' => $form,
-            'workflow' => $workflow,
+            'workfow' => $workfow,
             'ligneEtape' => $ligneEtapes,
             'type'=>'new'
         ]);
@@ -390,7 +398,7 @@ class DossierController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_dossier_dossier_index');
+            $redirect = $this->generateUrl('app_config_dossiers_index');
 
 
             if ($form->isValid()) {
@@ -446,7 +454,7 @@ class DossierController extends BaseController
             $entityManager->remove($dossier);
             $entityManager->flush();
 
-            $redirect = $this->generateUrl('app_dossier_dossier_index');
+            $redirect = $this->generateUrl('app_config_dossiers_index');
 
             $message = 'Opération effectuée avec succès';
 

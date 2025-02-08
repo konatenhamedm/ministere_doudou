@@ -33,6 +33,7 @@ const INDEX_ROOT_NAME = 'app_reunion_salle_index';
 
     $table = $dataTableFactory->create()
     // ->add('id', TextColumn::class, ['label' => 'Identifiant'])
+    ->add('libelle', TextColumn::class, ['label' => 'Nom de la salle'])
     ->createAdapter(ORMAdapter::class, [
     'entity' => Salle::class,
     ])

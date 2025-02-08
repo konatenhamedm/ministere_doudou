@@ -34,52 +34,53 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Constraints\File;
+
 class HomeController extends AbstractController
 {
     use FileTrait;
     protected const UPLOAD_PATH = 'media_entreprise';
 
 
-   
+
 
 
     #[Route(path: '/home', name: 'app_default')]
-    public function index(Request $request,  NormalizerInterface $normalizer): Response
+    public function index(Request $request, CalendarRepository $repository, NormalizerInterface $normalizer): Response
     {
 
-//         $listes = $repository->getEventDateValide();
-//         $listesEncours = $repository->getEventDateEncours();
-// //dd($listesEncours);
-//         $ligne = $repository->findAll();
+        $listes = $repository->getEventDateValide();
+        $listesEncours = $repository->getEventDateEncours();
+
+        $ligne = $repository->findAll();
         //  dd($listes);
         $rdvs = [];
 
-        // foreach ($ligne as $data) {
-        //     $rdvs[] = [
-        //         'id' => $data->getId(),
-        //         'start' => $data->getStart()->format('Y-m-d H:i:s'),
-        //         'end' => $data->getEnd()->format('Y-m-d H:i:s'),
-        //         'description' => $data->getDescription(),
-        //         'title' => $data->getTitle(),
-        //         'allDay' => $data->getAllDay(),
-        //         'backgroundColor' => $data->getBackgroundColor(),
-        //         'borderColor' => $data->getBorderColor(),
-        //         'textColor' => $data->getTextColor(),
-        //     ];
-        // }
+        foreach ($ligne as $data) {
+            $rdvs[] = [
+                'id' => $data->getId(),
+                'start' => $data->getStart()->format('Y-m-d H:i:s'),
+                'end' => $data->getEnd()->format('Y-m-d H:i:s'),
+                'description' => $data->getDescription(),
+                'title' => $data->getTitle(),
+                'allDay' => $data->getAllDay(),
+                'backgroundColor' => $data->getBackgroundColor(),
+                'borderColor' => $data->getBorderColor(),
+                'textColor' => $data->getTextColor(),
+            ];
+        }
 
-        // $data =  json_encode($rdvs);
+        $data =  json_encode($rdvs);
 
-        return $this->render('home/index.html.twig' );
+        return $this->render('home/index.html.twig', compact('data', 'listes', 'listesEncours'));
     }
 
 
     #[Route('/admin/{id}/event', name: 'event_detaiils', methods: ['GET', 'POST'])]
-    public function detailsEvent($id, )
+    public function detailsEvent($id, CalendarRepository $repository)
     {
         return $this->render('home/info.html.twig', [
             'titre' => 'EVENEMENT',
-            
+            'data' => $repository->findOneBy(['id' => $id])
         ]);
     }
 
@@ -142,7 +143,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_client_client_new', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError, Security $security,DocumentTypeClientRepository $documentTypeClientRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError, Security $security, DocumentTypeClientRepository $documentTypeClientRepository): Response
     {
 
         $typeClient =  $request->query->get('typeClient');
@@ -155,15 +156,15 @@ class HomeController extends AbstractController
 
         // dd($documentTypeClients);
         foreach ($documentTypeClients as $key => $value) {
-         $documentClient  = new DocumentClient();
- 
-         $documentClient->setDocumentTypeClient($value);
-        
- 
-         $client->addDocumentClient($documentClient);
+            $documentClient  = new DocumentClient();
+
+            $documentClient->setDocumentTypeClient($value);
+
+
+            $client->addDocumentClient($documentClient);
         }
- 
-       // dd($validationGroups);
+
+        // dd($validationGroups);
         $form = $this->createForm(ClientType::class, $client, [
             'method' => 'POST',
             'doc_options' => [
@@ -174,10 +175,10 @@ class HomeController extends AbstractController
             'action' => $this->generateUrl('app_client_client_new')
         ]);
         // Add logic to fetch DocumentTypeClient based on selected TypeClient
-     
-      
+
+
         $form->handleRequest($request);
-        
+
         $data = null;
         $statutCode = Response::HTTP_OK;
 
@@ -187,7 +188,7 @@ class HomeController extends AbstractController
             $response = [];
             $redirect = $this->generateUrl('app_config_parametre_client_index');
 
-          
+
 
             if ($form->isValid()) {
 
@@ -223,14 +224,14 @@ class HomeController extends AbstractController
             'client' => $client,
             'form' => $form,
             'documentTypeClients' => $documentTypeClients,
-            'type'=>'new'
+            'type' => 'new'
         ]);
     }
     #[Route('/new/load/{typeClient}', name: 'app_client_client_new_load', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function newLoad(Request $request,$typeClient,TypeClientRepository $typeClientRepository, EntityManagerInterface $entityManager, FormError $formError, Security $security,DocumentTypeClientRepository $documentTypeClientRepository): Response
+    public function newLoad(Request $request, $typeClient, TypeClientRepository $typeClientRepository, EntityManagerInterface $entityManager, FormError $formError, Security $security, DocumentTypeClientRepository $documentTypeClientRepository): Response
     {
 
-       
+
         $all = $request->query->all();
 
         $client = new Client();
@@ -241,14 +242,13 @@ class HomeController extends AbstractController
 
         // dd($documentTypeClients);
         foreach ($documentTypeClients as $key => $value) {
-         $documentClient  = new DocumentClient();
- 
-         $documentClient->setDocumentTypeClient($value);
-         $client->addDocumentClient($documentClient);
+            $documentClient  = new DocumentClient();
 
+            $documentClient->setDocumentTypeClient($value);
+            $client->addDocumentClient($documentClient);
         }
- 
-       // dd($validationGroups);
+
+        // dd($validationGroups);
         $form = $this->createForm(ClientType::class, $client, [
             'method' => 'POST',
             'doc_options' => [
@@ -256,15 +256,15 @@ class HomeController extends AbstractController
                 'attrs' => ['class' => 'filestyle'],
             ],
             'validation_groups' => $validationGroups,
-            'action' => $this->generateUrl('app_client_client_new_load',[
-                'typeClient'=>$typeClient
+            'action' => $this->generateUrl('app_client_client_new_load', [
+                'typeClient' => $typeClient
             ])
         ]);
         // Add logic to fetch DocumentTypeClient based on selected TypeClient
-     
-      
+
+
         $form->handleRequest($request);
-        
+
         $data = null;
         $statutCode = Response::HTTP_OK;
 
@@ -275,7 +275,7 @@ class HomeController extends AbstractController
             $redirect = $this->generateUrl('app_config_parametre_client_index');
 
 
-           
+
 
             if ($form->isValid()) {
                 $client->setEntreprise($security->getUser()->getEmploye()->getEntreprise());
@@ -310,9 +310,9 @@ class HomeController extends AbstractController
             'client' => $client,
             'form' => $form,
             'typeClient' => $typeClient,
-            'code'=>$typeClientRepository->find($typeClient)->getCode(),
+            'code' => $typeClientRepository->find($typeClient)->getCode(),
             'documentTypeClients' => $documentTypeClients,
-            'type'=>'new'
+            'type' => 'new'
         ]);
     }
 }

@@ -29,7 +29,7 @@ class  ReunionConfigController extends BaseController
             ],
 
             [
-                'label' => 'Liste des Reunions',
+                'label' => 'LISTE DES REUNIONS',
                 'icon' => 'bi bi-list',
                 'href' => $this->generateUrl('app_reunion_reunion_index')
             ],

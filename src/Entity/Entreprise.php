@@ -80,7 +80,10 @@ class Entreprise
 
 
 
-  
+    #[ORM\OneToMany(mappedBy: 'entreprise', targetEntity: Calendar::class)]
+    private Collection $calendars;
+
+
 
 
 
@@ -94,7 +97,7 @@ class Entreprise
         // $this->clients = new ArrayCollection();
         // $this->acteConstitutions = new ArrayCollection();
         // $this->archives = new ArrayCollection();
-        // $this->calendars = new ArrayCollection();
+        $this->calendars = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -517,33 +520,33 @@ class Entreprise
     //     return $this;
     // }
 
-    // /**
-    //  * @return Collection<int, Calendar>
-    //  */
-    // public function getCalendars(): Collection
-    // {
-    //     return $this->calendars;
-    // }
+    /**
+     * @return Collection<int, Calendar>
+     */
+    public function getCalendars(): Collection
+    {
+        return $this->calendars;
+    }
 
-    // public function addCalendar(Calendar $calendar): static
-    // {
-    //     if (!$this->calendars->contains($calendar)) {
-    //         $this->calendars->add($calendar);
-    //         $calendar->setEntreprise($this);
-    //     }
+    public function addCalendar(Calendar $calendar): static
+    {
+        if (!$this->calendars->contains($calendar)) {
+            $this->calendars->add($calendar);
+            $calendar->setEntreprise($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeCalendar(Calendar $calendar): static
-    // {
-    //     if ($this->calendars->removeElement($calendar)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($calendar->getEntreprise() === $this) {
-    //             $calendar->setEntreprise(null);
-    //         }
-    //     }
+    public function removeCalendar(Calendar $calendar): static
+    {
+        if ($this->calendars->removeElement($calendar)) {
+            // set the owning side to null (unless already changed)
+            if ($calendar->getEntreprise() === $this) {
+                $calendar->setEntreprise(null);
+            }
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 }

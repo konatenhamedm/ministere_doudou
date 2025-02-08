@@ -34,6 +34,24 @@ framework:
                    valider:
                        from: en_cours
                        to: termine
+
+           dosssier:
+               type: 'state_machine' # or 'state_machine'
+               audit_trail:
+                   enabled: true
+               marking_store:
+                   type: 'method'
+                   property: 'etat'            
+               supports: 
+                   - App\Entity\Dossier
+               initial_marking: en_cours
+               places:
+                   - en_cours
+                   - termine
+               transitions:
+                   valider:
+                       from: en_cours
+                       to: termine
            demande:
                 type: 'state_machine' # or 'state_machine'
                 audit_trail:
