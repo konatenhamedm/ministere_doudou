@@ -46,7 +46,7 @@ class DossierController extends BaseController
 
         $table = $dataTableFactory->create()
            ->add('libelle', TextColumn::class, ['label' => 'Nom de dossier'])
-            ->add('dateCreation', DateTimeColumn::class, ['label' => 'Date de creation'])
+            ->add('dateCreation', DateTimeColumn::class, ['label' => 'Date de creation','format'=> 'd/m/Y'])
             ->add('description', TextColumn::class, ['label' => 'Description'])
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Dossier::class,
@@ -225,9 +225,6 @@ class DossierController extends BaseController
         // $workflow = isset($all['workflow']) ? $all['workflow'] : null;
         $all = $request->query->all();
         $workflow = isset($all['dossier']['workfow']) ? $all['dossier']['workfow'] : null;
-
-        $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workflow]);
-
         $ligneEtapes = $ligneEtapeRepository->findBy(['workflow' => $workflow]);
      
        $dossier = new Dossier();
@@ -306,7 +303,7 @@ class DossierController extends BaseController
             $ligneReponsableDossiers->setLigneEtape($value);
             $dossier->addLigneReponsableDossier($ligneReponsableDossiers);
         }
-       
+
        // dd($validationGroups);
       $form = $this->createForm(DossierType::class, $dossier, [
             'method' => 'POST',

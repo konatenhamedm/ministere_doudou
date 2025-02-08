@@ -38,12 +38,12 @@ class DossierType extends AbstractType
         ->add('libelle', TextType::class, ['label' => 'Libellé'])
 
         ->add('dateCreation', DateType::class, [
+            'label' => 'Date de creation',
+            'html5' => false,
+            'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
             'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de création',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],
+            'format' => 'dd/MM/yyyy',
+            'empty_data' => date('d/m/Y')
         ])
         ->add('description', TextareaType::class, ['label' => 'Description', 'required' => false, 'empty_data' => ''])
         ->add('ligneReponsableDossier', CollectionType::class, [
