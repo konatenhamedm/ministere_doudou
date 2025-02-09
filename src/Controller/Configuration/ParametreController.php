@@ -39,9 +39,9 @@ class ParametreController extends BaseController
          }*/
         $modules = [
             [
-                'label' => 'PROJET',
+                'label' => 'STRUCTURE',
                 'icon' => 'bi bi-list',
-                'href' => $this->generateUrl('app_config_parametre_ls', ['module' => 'config'])
+                'href' => $this->generateUrl('app_parametre_entreprise_index', ['module' => 'config'])
             ],
             [
                 'label' => 'LOCALITE',
@@ -61,13 +61,13 @@ class ParametreController extends BaseController
             // ],
 
             [
-                'label' => 'Le personnel',
+                'label' => 'LE PERSONNEL',
                 'icon' => 'bi bi-users',
                 'href' => $this->generateUrl('app_config_parametre_ls', ['module' => 'utilisateur'])
             ],
 
             [
-                'label' => 'Attribution des accès',
+                'label' => 'ATTRIBUTION DES ACCES',
                 'icon' => 'bi bi-users',
                 'href' => $this->generateUrl('app_utilisateur_groupe_index')
             ],

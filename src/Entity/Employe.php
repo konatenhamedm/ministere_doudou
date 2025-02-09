@@ -63,8 +63,8 @@ class Employe
     #[ORM\JoinColumn(nullable: true)]
     private ?FichierAdmin $piece = null;
 
-    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Mission::class)]
-    private Collection $missions;
+    // #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Mission::class)]
+    // private Collection $missions;
 
     #[ORM\ManyToMany(targetEntity: Mission::class, mappedBy: 'participants')]
     private Collection $participant_mission;
@@ -95,7 +95,7 @@ class Employe
 
     public function __construct()
     {
-        $this->missions = new ArrayCollection();
+        // $this->missions = new ArrayCollection();
         $this->participant_mission = new ArrayCollection();
         $this->presences = new ArrayCollection();
         $this->rapportages = new ArrayCollection();
@@ -280,35 +280,35 @@ class Employe
         return $this;
     }
 
-    /**
-     * @return Collection<int, Mission>
-     */
-    public function getMissions(): Collection
-    {
-        return $this->missions;
-    }
+    // /**
+    //  * @return Collection<int, Mission>
+    //  */
+    // public function getMissions(): Collection
+    // {
+    //     return $this->missions;
+    // }
 
-    public function addMission(Mission $mission): static
-    {
-        if (!$this->missions->contains($mission)) {
-            $this->missions->add($mission);
-            $mission->setEmploye($this);
-        }
+    // public function addMission(Mission $mission): static
+    // {
+    //     if (!$this->missions->contains($mission)) {
+    //         $this->missions->add($mission);
+    //         $mission->setEmploye($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeMission(Mission $mission): static
-    {
-        if ($this->missions->removeElement($mission)) {
-            // set the owning side to null (unless already changed)
-            if ($mission->getEmploye() === $this) {
-                $mission->setEmploye(null);
-            }
-        }
+    // public function removeMission(Mission $mission): static
+    // {
+    //     if ($this->missions->removeElement($mission)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($mission->getEmploye() === $this) {
+    //             $mission->setEmploye(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, Mission>

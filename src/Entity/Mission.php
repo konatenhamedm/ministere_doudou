@@ -25,35 +25,16 @@ class Mission
     #[Assert\NotBlank(message: "Veuillez renseigner l'objet de la mission")]
     private $objetMission;
 
-    #[ORM\Column(length: 255,name: "numero_om")]
-    private ?string $numeroOM = null;
-
-    // #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_creation_mission")]
-    // private ?\DateTimeInterface $dateCreationMission = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_pretuve", nullable: true)]
     private ?\DateTimeInterface $dateDebutPrevue = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_pretuve", nullable: true)]
     private ?\DateTimeInterface $dateFinPrevue = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_debut_effective", nullable: true)]
-    private ?\DateTimeInterface $dateDebutEffective = null;
+  
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE,name: "date_fin_effective", nullable: true)] 
-    private ?\DateTimeInterface $dateFinEffective = null;
-
-    #[ORM\Column(length: 255,name: "montant_participant_mission")]
-    private ?string $montantParticipantMission = null;
-
-    #[ORM\Column(length: 255,name: "pourcentage_avance_mission")]
-    private ?string $pourcentageAvanceMission = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $initiateurMission = null;
-
-    #[ORM\ManyToOne(inversedBy: 'missions')]
-    private ?employe $employe = null;
+    // #[ORM\ManyToOne(inversedBy: 'missions')]
+    // private ?employe $employe = null;
 
     #[ORM\ManyToOne(inversedBy: 'missions')]
     private ?MoyenTransport $moyenTransport = null;
@@ -72,8 +53,7 @@ class Mission
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?CompteRendu $compteRendu = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $imputationBudgetaire = null;
+  
 
     #[ORM\ManyToOne(cascade: ["persist"], fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: true)]
@@ -88,8 +68,13 @@ class Mission
     #[ORM\Column(type: 'string', length: 255)]
     private string $etat = 'en_cours';
 
+    #[ORM\ManyToOne(inversedBy: 'missions')]
+    #[Gedmo\Blameable(on: 'create')]
+    private ?Utilisateur $initiateurMission = null;
+    
     #[ORM\Column(nullable: true, type: Types::TEXT)]
     private ?string $justification = null;
+
 
     public function __construct()
     {
@@ -131,29 +116,8 @@ class Mission
         return $this;
     }
 
-    public function getNumeroOM(): ?string
-    {
-        return $this->numeroOM;
-    }
 
-    public function setNumeroOM(string $numeroOM): static
-    {
-        $this->numeroOM = $numeroOM;
-
-        return $this;
-    }
-
-    // public function getDateCreationMission(): ?\DateTimeInterface
-    // {
-    //     return $this->dateCreationMission;
-    // }
-
-    // public function setDateCreationMission(\DateTimeInterface $dateCreationMission): static
-    // {
-    //     $this->dateCreationMission = $dateCreationMission;
-
-    //     return $this;
-    // }
+   
 
     public function getDateDebutPrevue(): ?\DateTimeInterface
     {
@@ -179,77 +143,19 @@ class Mission
         return $this;
     }
 
-    public function getDateDebutEffective(): ?\DateTimeInterface
-    {
-        return $this->dateDebutEffective;
-    }
+   
 
-    public function setDateDebutEffective(\DateTimeInterface $dateDebutEffective): static
-    {
-        $this->dateDebutEffective = $dateDebutEffective;
+    // public function getEmploye(): ?employe
+    // {
+    //     return $this->employe;
+    // }
 
-        return $this;
-    }
+    // public function setEmploye(?employe $employe): static
+    // {
+    //     $this->employe = $employe;
 
-    public function getDateFinEffective(): ?\DateTimeInterface
-    {
-        return $this->dateFinEffective;
-    }
-
-    public function setDateFinEffective(\DateTimeInterface $dateFinEffective): static
-    {
-        $this->dateFinEffective = $dateFinEffective;
-
-        return $this;
-    }
-
-    public function getMontantParticipantMission(): ?string
-    {
-        return $this->montantParticipantMission;
-    }
-
-    public function setMontantParticipantMission(string $montantParticipantMission): static
-    {
-        $this->montantParticipantMission = $montantParticipantMission;
-
-        return $this;
-    }
-
-    public function getPourcentageAvanceMission(): ?string
-    {
-        return $this->pourcentageAvanceMission;
-    }
-
-    public function setPourcentageAvanceMission(string $pourcentageAvanceMission): static
-    {
-        $this->pourcentageAvanceMission = $pourcentageAvanceMission;
-
-        return $this;
-    }
-
-    public function getInitiateurMission(): ?string
-    {
-        return $this->initiateurMission;
-    }
-
-    public function setInitiateurMission(string $initiateurMission): static
-    {
-        $this->initiateurMission = $initiateurMission;
-
-        return $this;
-    }
-
-    public function getEmploye(): ?employe
-    {
-        return $this->employe;
-    }
-
-    public function setEmploye(?employe $employe): static
-    {
-        $this->employe = $employe;
-
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getMoyenTransport(): ?MoyenTransport
     {
@@ -361,17 +267,6 @@ class Mission
         return $this;
     }
 
-    public function getImputationBudgetaire(): ?string
-    {
-        return $this->imputationBudgetaire;
-    }
-
-    public function setImputationBudgetaire(string $imputationBudgetaire): static
-    {
-        $this->imputationBudgetaire = $imputationBudgetaire;
-
-        return $this;
-    }
 
     public function getOptions(): array
     {
@@ -436,6 +331,18 @@ class Mission
     public function setJustification(string $justification): self
     {
         $this->justification = $justification;
+
+        return $this;
+    }
+
+    public function getInitiateurMission(): ?Utilisateur
+    {
+        return $this->initiateurMission;
+    }
+
+    public function setInitiateurMission(?Utilisateur $initiateurMission): static
+    {
+        $this->initiateurMission = $initiateurMission;
 
         return $this;
     }

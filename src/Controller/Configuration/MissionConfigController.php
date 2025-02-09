@@ -73,11 +73,11 @@ class  MissionConfigController extends BaseController
 
             'config' => [
 
-                [
-                    'label' => 'Tarif',
-                    'id' => 'param_tarif',
-                    'href' => $this->generateUrl('app_mission_tarif_index')
-                ],
+                // [
+                //     'label' => 'Tarif',
+                //     'id' => 'param_tarif',
+                //     'href' => $this->generateUrl('app_mission_tarif_index')
+                // ],
               
 
 

@@ -138,13 +138,13 @@ class EntrepriseController extends BaseController
                                 'edit' => [
                                     'url' => $this->generateUrl('app_parametre_entreprise_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
                                 ],
-                                'show' => [
-                                    'url' => $this->generateUrl('app_parametre_entreprise_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
-                                ],
-                                'delete' => [
-                                    'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_parametre_entreprise_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'], 'render' => $renders['delete']
-                                ]
+                                // 'show' => [
+                                //     'url' => $this->generateUrl('app_parametre_entreprise_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
+                                // ],
+                                // 'delete' => [
+                                //     'target' => '#exampleModalSizeNormal',
+                                //     'url' => $this->generateUrl('app_parametre_entreprise_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'], 'render' => $renders['delete']
+                                // ]
                             ]
 
                         ];

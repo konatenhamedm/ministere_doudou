@@ -50,15 +50,7 @@ class MissionType extends AbstractType
             // ->add('fichier')
 
             ->add('objetMission', null, ['label' => 'Objet de la mission']) 
-            ->add('numeroOM')
-        // ->add('dateCreationMission', DateType::class, [
-        //     'label' => 'Date de créetion',
-        //     'html5' => false,
-        //     'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
-        //     'widget' => 'single_text',
-        //     'format' => 'dd/MM/yyyy',
-        //     'empty_data' => date('d/m/Y')
-        // ])
+    
         ->add('dateDebutPrevue',
          DateType::class, [
             'label' => 'Date de debut',
@@ -76,40 +68,7 @@ class MissionType extends AbstractType
             ]
         )
        
-            ->add('dateDebutEffective', DateType::class, [
-                    'label' => "Date de debut effective",
-                    'html5' => false,
-                    'attr' => ['class' => 'no-auto skip-init'],
-                    'widget' => 'single_text',
-                    'format' => 'dd/MM/yyyy',
-                    'empty_data' => date('d/m/Y')
-                ])
-        ->add('dateFinEffective', DateType::class, [
-            'label' => 'Date de fin effective',
-            'html5' => false,
-            'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
-            'widget' => 'single_text',
-            'format' => 'dd/MM/yyyy',
-            'empty_data' => date('d/m/Y')
-        ])
-
-        
-        ->add('montantParticipantMission')
-        ->add('pourcentageAvanceMission')
-        ->add(
-            'initiateurMission',
-            null,
-            [
-                'label' => 'Initiateur'
-            ]
-        )
-       -> add(
-            'imputationBudgetaire',
-            null,
-            [
-                'label' => 'Imputation Budgetaire',
-            ]
-        )
+     
         
             ->add('moyenTransport', EntityType::class, ['class' => MoyenTransport::class, 'choice_label' => 'libelle', 'label' => 'Moyen de transport'])
             ->add('options', ChoiceType::class, [
@@ -118,27 +77,8 @@ class MissionType extends AbstractType
                 'expanded' => true,
 
             ])
-        ->add(
-            'employe',
-            EntityType::class,
-            [
-                'label' => 'Créée par',
-                'class' => Employe::class,
-                'choice_label' => function ($employe) {
-                    return $employe->getNomComplet();
-                },
-                'data' => $options['data']->getEmploye() 
-            ]
-        )
-            // ->add(
-            //     'baileur',
-            //     EntityType::class,
-            //     [
-            //         'label' => 'Source de financement',
-            //         'class' => Bailleur::class,
-            //         'choice_label' => 'sigle'
-            //     ]
-            // )
+     
+           
 
         ->add(
             'participants',
@@ -155,7 +95,7 @@ class MissionType extends AbstractType
         )
             ->add('compteRendu')
       
-        ->add('fichier', FichierType::class, ['label' => 'Fichier', 'label' => false, 'doc_options' => $options['doc_options'], 'required' => $options['doc_required'] ?? true])
+        ->add('fichier', FichierType::class, ['label' => 'JOINDRE LES TDR', 'label' => false, 'doc_options' => $options['doc_options'], 'required' => $options['doc_required'] ?? true])
         ->add('ligneMissions', CollectionType::class, [
             'entry_type' => LigneMissionType::class,
             'entry_options' => [
@@ -180,24 +120,7 @@ class MissionType extends AbstractType
             }
         ));
 
-        // $builder->addEventListener(
-        //     FormEvents::PRE_SET_DATA,
-        //     function (FormEvent $event) use ( Employe $employe) {
-        //         $data = $event->getData();
-        //         $form = $event->getForm();
-
-        //         if ($data !== null) {
-        //             //Demande de complément
-        //             if ($data->getEtat() && $data->getEtat()->getId() == 9) {
-        //                 $form->add('commentaire', TextareaType::class, ['required' => false, 'mapped' => false, 'label' => 'Observation initiateur', 'empty_data' => '']);
-        //             }
-
-
-        //             if (!$data->getParticipants()->count() && $employe = $employe->getEmploye()) {
-        //                 $data->getParticipants()->add($employe);
-        //             }
-        //         }
-        //         });
+        
 
         if($etat == "create"){
             $builder->add('justification', HiddenType::class, [

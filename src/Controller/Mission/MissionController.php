@@ -243,7 +243,7 @@ class MissionController extends BaseController
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
         $mission = new Mission();
-           $ligneMissions = new LigneMission();
+        $ligneMissions = new LigneMission();
         $mission->addLigneMission($ligneMissions);
         $validationGroups = ['Default', 'FileRequired', 'oui'];
         $filePath = 'mission';

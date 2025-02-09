@@ -55,9 +55,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: CourierArrive::class)]
     private Collection $courierArrives;
 
+    #[ORM\OneToMany(mappedBy: 'initiateurMission', targetEntity: Mission::class)]
+    private Collection $missions;
+
     public function __construct()
     {
         $this->courierArrives = new ArrayCollection();
+        $this->missions = new ArrayCollection();
     }
 
 
@@ -392,6 +396,36 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
             // set the owning side to null (unless already changed)
             if ($courierArrife->getUser() === $this) {
                 $courierArrife->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Mission>
+     */
+    public function getMissions(): Collection
+    {
+        return $this->missions;
+    }
+
+    public function addMission(Mission $mission): static
+    {
+        if (!$this->missions->contains($mission)) {
+            $this->missions->add($mission);
+            $mission->setInitiateurMission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMission(Mission $mission): static
+    {
+        if ($this->missions->removeElement($mission)) {
+            // set the owning side to null (unless already changed)
+            if ($mission->getInitiateurMission() === $this) {
+                $mission->setInitiateurMission(null);
             }
         }
 
