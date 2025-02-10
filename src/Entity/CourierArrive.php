@@ -57,17 +57,17 @@ class CourierArrive
     #[ORM\OneToMany(targetEntity: DocumentCourier::class, mappedBy: 'courier', cascade: ['persist'])]
     private $documentCouriers;
 
-    #[ORM\ManyToOne(inversedBy: 'courierArrives')]
+    #[ORM\ManyToOne(inversedBy: 'courierArrives', cascade: ['persist'])]
     private ?Utilisateur $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'courierArrives')]
+    #[ORM\ManyToOne(inversedBy: 'courierArrives', cascade: ['persist'])]
     private ?Entreprise $entreprise = null;
 
-    #[ORM\OneToMany(mappedBy: 'courierArrive', targetEntity: Imputation::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'courierArrive', targetEntity: Imputation::class, cascade: ['persist','remove'])]
     private Collection $imputations;
 
 
-    #[ORM\OneToMany(mappedBy: 'courierArrive', targetEntity: FichierAccusseReception::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'courierArrive', targetEntity: FichierAccusseReception::class, cascade: ['persist', 'remove'])]
     private Collection $fichierAccusseReceptions;
 
     public function __construct()

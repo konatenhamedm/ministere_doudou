@@ -17,7 +17,7 @@ class DocumentAtelier
     #[ORM\JoinColumn(nullable: true)]
     private ?FichierAdmin $fichier = null;
 
-    #[ORM\ManyToOne(inversedBy: 'documentAteliers')]
+    #[ORM\ManyToOne(inversedBy: 'documentAteliers', cascade: ['persist'])]
     private ?Atelier $atelier = null;
 
 

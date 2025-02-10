@@ -28,7 +28,8 @@ class Atelier
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateFin = null;
 
-    #[ORM\OneToMany(mappedBy: 'atelier', targetEntity: DocumentAtelier::class)]
+   
+    #[ORM\OneToMany(targetEntity: DocumentAtelier::class, mappedBy: 'atelier', cascade: ['persist', 'remove'])]
     private Collection $documentAteliers;
 
     public function __construct()

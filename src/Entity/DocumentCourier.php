@@ -16,7 +16,7 @@ class DocumentCourier
     #[ORM\Column(type: 'string', length: 255)]
     private $titre;
 
-    #[ORM\ManyToOne(targetEntity: CourierArrive::class, inversedBy: 'documentCouriers')]
+    #[ORM\ManyToOne(targetEntity: CourierArrive::class, inversedBy: 'documentCouriers', cascade: ['persist', 'remove'])]
     private $courier;
 
 

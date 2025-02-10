@@ -1,227 +1,256 @@
 {% block page_content %}
-    {% form_theme form 'widget/fields-block.html.twig' %}
-        {% from '_macros/ligne_missions.html.twig' import prototype_ligne_missions %}
+{% form_theme form 'widget/fields-block.html.twig' %}
+{% from '_macros/ligne_missions.html.twig' import prototype_ligne_missions %}
 
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Création Mission</h5>
-        <div class="btn btn-icon btn-sm  ms-2" data-bs-dismiss="modal" aria-label="Close">
-            <span class="svg-icon svg-icon-2x text-white">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor"></rect>
-					<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor"></rect>
-				</svg>
-            </span>
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Création Mission</h5>
+    <div class="btn btn-icon btn-sm ms-2" data-bs-dismiss="modal" aria-label="Close">
+        <span class="svg-icon svg-icon-2x text-white">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)"
+                    fill="currentColor"></rect>
+                <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)"
+                    fill="currentColor"></rect>
+            </svg>
+        </span>
+    </div>
+</div>
+{{ form_start(form, {'attr': {'role':'form', 'class': 'form'}}) }}
+<div class="modal-body content-doc">
+    {{ include('_includes/ajax/response.html.twig') }}
+    {# {{ form_widget(form) }} #}
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_row(form.objetMission) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.options) }}
+        </div>
+        <div class="col-md-6">
+            <label class="required">JOINDRE LES TDR</label>
+            {{ form_row(form.fichier) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.dateDebutPrevue) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.dateFinPrevue) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.moyenTransport) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.participants) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.compteRendu) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.justification) }}
         </div>
     </div>
-    {{ form_start(form, {'attr': {'role':'form', 'class': 'form'}}) }}
-    <div class="modal-body content-doc">
-        {{ include('_includes/ajax/response.html.twig') }}
-        {# {{ form_widget(form) }} #}
-        <div class="row">
-            <div class="col-md-12">
-                {{ form_row(form.objetMission)}}
-            </div>
-           
-            <div class="col-md-6 ">
-                {{ form_row(form.options)}}
-            </div>
-           
-            <div class="col-md-6">
-                <label class="required">JOINDRE LES TDR</label>
-                {{ form_row(form.fichier)}}  
-            </div>
-           
-            <div class="col-md-6">
-                {{ form_row(form.dateDebutPrevue)}}
-
-            </div>
-            <div class="col-md-6">
-                {{ form_row(form.dateFinPrevue)}}
-            </div>
-        
-                                                                                     
-            {# <div class="col-md-6">
-                {{ form_row(form.initiateurMission)}}
-            </div>                                                                                                                #}
-            {# <div class="col-md-6">
-                {{ form_row(form.employe)}}
-            </div> #}
-                                                                                                                                                               
-            <div class="col-md-6">
-                {{ form_row(form.moyenTransport)}}
-            </div>                                                                                                                                                                                                                  
-            <div class="col-md-6">
-         {{ form_row(form.participants)}}
-            </div>
-       
-            <div class="col-md-12">
-                {{ form_row(form.compteRendu)}}
-            </div>
-            <div class="col-md-12">
-                {{ form_row(form.justification)}}
-            </div>
-        </div>                                                                  
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-
-    </div>
-    <div class="p-8">
-    
-        {{ prototype_ligne_missions(form) }}
-    </div>
-    <div class="modal-footer">
-        {# {{ include('_includes/ajax/loader.html.twig') }} #}
-        <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Annuler</button>
-        <button type="submit" class="btn btn-main btn-ajax btn-sm"><span class="spinner-border d-none  spinner-ajax spinner-border-sm" role="status" aria-hidden="true"></span> Valider</button>
-    </div>
-    {{ form_end(form) }}
+</div>
+<div class="p-8">
+    {{ prototype_ligne_missions(form) }}
+</div>
+<div class="modal-footer">
+    {# {{ include('_includes/ajax/loader.html.twig') }} #}
+    <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Annuler</button>
+    <button type="submit" class="btn btn-main btn-ajax btn-sm">
+        <span class="spinner-border d-none spinner-ajax spinner-border-sm" role="status" aria-hidden="true"></span>
+        Valider
+    </button>
+</div>
+{{ form_end(form) }}
 {% endblock %}
 
 {% block java %}
-    <script>
+<script>
+    // --- Fonctions utilitaires ---
 
-        $(function () {
-              $('.valider').hide()
-          
-            $('.justication').hide()
+    // Convertit une chaîne "YYYY-MM-DD" en objet Date
+    function parseDate(dateStr) {
+        var parts = dateStr.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
 
-            $('.no-auto').each(function () {
-                const $this = $(this);
-                const $id = $('#' + $this.attr('id'));
-                init_date_picker($id, 'down', (start, e) => {
-                    //$this.val(start.format('DD/MM/YYYY'));
-                }, null, null, false);
+    // Ajoute un nombre de jours à une date
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
 
-                $id.on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('DD/MM/YYYY'));
-                });
+    // Formate une date en "YYYY-MM-DD"
+    function formatDate(date) {
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+        if (day < 10) day = '0' + day;
+        if (month < 10) month = '0' + month;
+        return year + '-' + month + '-' + day;
+    }
+
+    // --- Initialisation de la mission ---
+    function initMission() {
+        var today = new Date();
+        var todayStr = formatDate(today);
+        $('#mission_dateDebutPrevue').val(todayStr);
+        $('#mission_dateFinPrevue').val(todayStr);
+    }
+
+    // Met à jour les dates d'une ligne en fonction du nombre de jours saisi et de la ligne précédente
+    function updateLineDates($line) {
+        var nbJours = parseInt($line.find('.nbre-jours-table').val(), 10);
+        if (isNaN(nbJours) || nbJours <= 0) return;
+
+        var startDateStr;
+        // Si c'est la première ligne, la date de début est celle de la mission
+        var $prevLine = $line.prev('.row-colonne');
+        if ($prevLine.length === 0) {
+            startDateStr = $('#mission_dateDebutPrevue').val();
+        } else {
+            // Sinon, la date de début est la date de fin de la ligne précédente
+            startDateStr = $prevLine.find('[name*="[dateFin]"]').val();
+        }
+
+        var startDate = parseDate(startDateStr);
+        var endDate = addDays(startDate, nbJours);
+
+        $line.find('[name*="[dateDebut]"]').val(formatDate(startDate));
+        $line.find('[name*="[dateFin]"]').val(formatDate(endDate));
+
+        // Met à jour la date de fin de mission si cette ligne est la dernière
+        if ($line.is(':last-child')) {
+            $('#mission_dateFinPrevue').val(formatDate(endDate));
+        }
+    }
+
+    // Met à jour les lignes suivantes si une modification dans une ligne impacte leur date de début
+    function updateSubsequentLines($line) {
+        $line.nextAll('.row-colonne').each(function () {
+            updateLineDates($(this));
+        });
+    }
+
+    // --- Gestion du DOM et des événements ---
+    $(function () {
+        // Initialisation des dates de mission à l'ouverture du modal
+        initMission();
+
+        // Initialisation des datepickers sur les champs concernés
+        $('.no-auto').each(function () {
+            const $this = $(this);
+            const $id = $('#' + $this.attr('id'));
+            init_date_picker($id, 'down', function (start, e) {
+                // Callback optionnel
+            }, null, null, false);
+            $id.on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
             });
-            init_select2('select');
         });
-        $(function () {
-            init_select2('select', null, '.content-doc');
-        });
+        init_select2('select');
+    });
 
-        $(function () {
+    $(function () {
+        init_select2('select', null, '.content-doc');
+    });
 
+    $(function () {
+        const $container = $('.proto-container');
+        var index = $container.find('.row-colonne').length;
 
-            const $container = $('.proto-container');
-
-            var index = $container.find('.row-colonne').length;
-
-
-            $(document).on('select2:select', '.select-type', function (e) {
-                const $this = $(this);
-                let field_str = $this.find('option:selected').attr('data-require-fields');
-                const $parent = $this.closest('.row-colonne');
-                let fields = [];
-                if (typeof field_str != 'undefined') {
-                    fields = field_str.split(',');
-                    for (let field of fields) {
-                        $parent.find('.' + field).removeClass('d-none');
-                    }
-                } else {
-                    $parent.find('.source,.valeurs').addClass('d-none');
+        // Gestion des sélections select2 avec champs complémentaires
+        $(document).on('select2:select', '.select-type', function (e) {
+            const $this = $(this);
+            let field_str = $this.find('option:selected').attr('data-require-fields');
+            const $parent = $this.closest('.row-colonne');
+            let fields = [];
+            if (typeof field_str !== 'undefined') {
+                fields = field_str.split(',');
+                for (let field of fields) {
+                    $parent.find('.' + field).removeClass('d-none');
                 }
-            });
+            } else {
+                $parent.find('.source,.valeurs').addClass('d-none');
+            }
+        });
 
+        // Bouton d'ajout de ligne
+        const $addLink = $('.add_line');
+        $addLink.click(function (e) {
+            const proto_class = $(this).attr('data-protoclass');
+            const name = $(this).attr('data-protoname');
+            const $container = $($(this).attr('data-container'));
+            addLine($container, name, proto_class);
+            e.preventDefault();
+        });
 
-            const $addLink = $('.add_line');
-            $addLink.click(function (e) {
+        // Pour les lignes déjà présentes
+        if (index > 0) {
+            $container.children('.row-colonne').each(function () {
                 const $this = $(this);
-                const proto_class = $this.attr('data-protoclass');
-                const name = $this.attr('data-protoname');
-                const $container = $($this.attr('data-container'));
-
-
-
-                addLine($container, name, proto_class);
-
-
-
-                e.preventDefault(); // évite qu'un # apparaisse dans l'URL
-            });
-
-            if (index > 0) {
-                $container.children('.row-colonne').each(function () {
+                addDeleteLink($this);
+                const $select = $this.find("select");
+                $select.each(function () {
                     const $this = $(this);
-                    addDeleteLink($this);
-                    const $select = $this.find("select");
-
-
-
-                    $select.each(function () {
-                        const $this = $(this);
-                        init_select2($this, null, '#exampleModalSizeSm2');
-                        if ($this.hasClass('select-type')) {
-                            let field_str = $this.find('option:selected').attr('data-require-fields');
-                            const $parent = $this.closest('.row-colonne');
-                            let fields = [];
-                            if (typeof field_str != 'undefined') {
-                                fields = field_str.split(',');
-                                for (let field of fields) {
-                                    $parent.find('.' + field).removeClass('d-none');
-                                }
-                            } else {
-                                $parent.find('.source,.valeurs').addClass('d-none');
+                    init_select2($this, null, '#exampleModalSizeSm2');
+                    if ($this.hasClass('select-type')) {
+                        let field_str = $this.find('option:selected').attr('data-require-fields');
+                        const $parent = $this.closest('.row-colonne');
+                        let fields = [];
+                        if (typeof field_str !== 'undefined') {
+                            fields = field_str.split(',');
+                            for (let field of fields) {
+                                $parent.find('.' + field).removeClass('d-none');
                             }
+                        } else {
+                            $parent.find('.source,.valeurs').addClass('d-none');
                         }
-                    });
-
-                });
-
-            }
-
-
-
-
-            // La fonction qui ajoute un formulaire Categorie
-            function addLine($container, name, proto_class) {
-                // Dans le contenu de l'attribut « data-prototype », on remplace :
-                // - le texte "__name__label__" qu'il contient par le label du champ
-                // - le texte "__name__" qu'il contient par le numéro du champ
-
-                var $prototype = $($(proto_class).attr('data-prototype')
-                    .replace(new RegExp(name + 'label__', 'g'), 'Colonne ' + (index + 1))
-                    .replace(new RegExp(name, 'g'), index));
-
-
-                init_select2($prototype.find('select'), null, '#exampleModalSizeSm2');
-
-
-                // On ajoute au prototype un lien pour pouvoir supprimer la prestation
-                addDeleteLink($prototype, name);
-                // On ajoute le prototype modifié à la fin de la balise <div>
-                $container.append($prototype);
-
-                index++;
-            }
-
-
-            function addDeleteLink($prototype, name = null) {
-                // Création du lien
-                $deleteLink = $('<a href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>');
-                // Ajout du lien
-                $prototype.find(".del-col").append($deleteLink);
-
-
-
-                // Ajout du listener sur le clic du lien
-                $deleteLink.click(function (e) {
-                    const $this = $(this);
-                    const $parent = $(this).closest('.row-colonne');
-                    //console.log($(this).attr('data-parent'), $(this));
-                    $parent.remove();
-
-                    if (index > 0) {
-                        index -= 1;
                     }
-
-                    e.preventDefault(); // évite qu'un # apparaisse dans l'URL
                 });
-            }
+            });
+        }
 
+        // Fonction qui ajoute une nouvelle ligne (via prototype)
+        function addLine($container, name, proto_class) {
+            var $prototype = $($(proto_class).attr('data-prototype')
+                .replace(new RegExp(name + 'label__', 'g'), 'Colonne ' + (index + 1))
+                .replace(new RegExp(name, 'g'), index));
+            init_select2($prototype.find('select'), null, '#exampleModalSizeSm2');
+            addDeleteLink($prototype, name);
+            $container.append($prototype);
 
+            // Dès l'ajout, calcule les dates de la nouvelle ligne
+            updateLineDates($prototype);
 
-        })
-    </script>
+            index++;
+        }
+
+        // Fonction pour ajouter le lien de suppression sur une ligne
+        function addDeleteLink($prototype, name = null) {
+            var $deleteLink = $('<a href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>');
+            $prototype.find(".del-col").append($deleteLink);
+            $deleteLink.click(function (e) {
+                var $parent = $(this).closest('.row-colonne');
+                $parent.remove();
+                if (index > 0) {
+                    index--;
+                }
+                e.preventDefault();
+                // Met à jour les dates des lignes restantes après suppression
+                $('.proto-container .row-colonne').each(function () {
+                    updateLineDates($(this));
+                });
+            });
+        }
+
+        // Lorsque le nombre de jours change dans une ligne, on recalcule ses dates et celles des suivantes
+        $(document).on('change', '.nbre-jours-table', function () {
+            var $line = $(this).closest('.row-colonne');
+            updateLineDates($line);
+            updateSubsequentLines($line);
+        });
+    });
+</script>
 {% endblock %}

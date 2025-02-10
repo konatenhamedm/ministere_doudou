@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Controller\BaseController;
+use App\Entity\DocumentCourier;
 use App\Entity\FichierAdmin;
 use App\Form\CourierArriveType;
 use App\Repository\DocumentCourierRepository;
@@ -249,7 +250,10 @@ class CourierArriveController extends BaseController
     public function new(Request $request, EntityManagerInterface $entityManager, FormError $formError): Response
     {
         $validationGroups = ['Default', 'FileRequired', 'oui'];
+
         $courierArrive = new CourierArrive();
+        $documentcour = new DocumentCourier();
+        $courierArrive->addDocumentCourier($documentcour);
         $form = $this->createForm(CourierArriveType::class, $courierArrive, [
             'method' => 'POST',
             'doc_options' => [

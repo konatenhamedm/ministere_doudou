@@ -1,4 +1,4 @@
-{% macro document_atelier(colonne) %}
+{% macro document_ateliers(colonne) %}
 <tr class="row-colonne even pointer table-light">
 
     <td class="p-2">
@@ -10,15 +10,12 @@
     <td class="p-2">
 
         <div style="display:no " class="field-matiere">
-            {% if colonne.vars.value %}
-
-            <a class="btn btn-dark btn-sm" target="_blank"
-                href=" {{ asset('uploads/media_entreprise/' ~  colonne.vars.value.fichier.alt) }} " download> <i
-                    class="bi bi-upload"></i>
+            {# {% if colonne.vars.value %}
+            
+            <a class="btn btn-dark btn-sm" target="_blank" href="{{ path('fichier_index', {id:  colonne.vars.value.fichier.alt}) }}"
+                download> <i class="bi bi-upload"></i>
             </a>
-
-
-            {% endif %}
+            {% endif %} #}
         </div>
     </td>
 
@@ -29,9 +26,9 @@
 {% endmacro %}
 
 
-{% macro prototype_document_atelier(form) %}
+{% macro prototype_document_ateliers(form) %}
     <div class="list-colonne"
-        data-prototype="{{ _self.document_atelier(form.documentAteliers.vars.prototype)|e }}"></div>
+        data-prototype="{{ _self.document_ateliers(form.documentAteliers.vars.prototype)|e }}"></div>
 
 <br>
 <table class="table table-bordered table-custom">
@@ -54,7 +51,7 @@
     </thead>
     <tbody class="column-container proto-container" data-childclass=""">
             {% for item in form.documentAteliers %}
-                {{ _self.prototype_document_atelier(item|e) }}
+                {{ _self.document_ateliers(item|e) }}
             {% endfor %}
         </tbody>
     </table>
