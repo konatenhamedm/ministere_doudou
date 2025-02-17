@@ -110,8 +110,9 @@
           <div class="fc-event-main">My Event 2</div>
         </div>#}
         {% for liste in listesEncours %}
-        <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-warning" data-class="bg-warning">
-          <div class="fc-event-main">
+        <div class="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event bg-secondary text-size-16"
+          data-class="bg-danger">
+          <div class="fc-event-main text-wrap" style="font-size:16px !important">
             <a href="{{ path('event_detaiils',{'id':liste.id }) }}" data-bs-toggle="modal"
               data-bs-target="#exampleModalSizeLg2">
               <i class="fe fe-plus"></i>{{ liste.title }}

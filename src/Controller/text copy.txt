@@ -1,0 +1,74 @@
+<?php
+namespace App\Controller;
+
+use App\Entity\Article;
+use App\Entity\LigneEntre;
+use App\Entity\LigneSortie;
+use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+class StockController extends AbstractController
+{
+    private EntityManagerInterface $entityManager;
+    private ArticleRepository $articleRepository;
+
+    public function __construct(EntityManagerInterface $entityManager, ArticleRepository $articleRepository)
+    {
+        $this->entityManager = $entityManager;
+        $this->articleRepository = $articleRepository;
+    }
+
+    #[Route('/stock/entree', methods: ['POST'])]
+    public function entreeStock(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $article = $this->articleRepository->find($data['article_id']);
+
+        if (!$article) {
+            return new JsonResponse(['message' => 'Article non trouvé'], 404);
+        }
+
+        $quantite = $data['quantite'];
+        $article->updateStock($quantite, true);
+
+        $ligneEntre = new LigneEntre();
+        $ligneEntre->setArticle($article);
+        $ligneEntre->setQuantite($quantite);
+
+        $this->entityManager->persist($ligneEntre);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Entrée de stock enregistrée'], 200);
+    }
+
+    #[Route('/stock/sortie', methods: ['POST'])]
+    public function sortieStock(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $article = $this->articleRepository->find($data['article_id']);
+
+        if (!$article) {
+            return new JsonResponse(['message' => 'Article non trouvé'], 404);
+        }
+
+        $quantite = $data['quantite'];
+        if ($article->getQuantite() < $quantite) {
+            return new JsonResponse(['message' => 'Stock insuffisant'], 400);
+        }
+
+        $article->updateStock($quantite, false);
+
+        $ligneSortie = new LigneSortie();
+        $ligneSortie->setArticle($article);
+        $ligneSortie->setQuantite($quantite);
+
+        $this->entityManager->persist($ligneSortie);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Sortie de stock enregistrée'], 200);
+    }
+}

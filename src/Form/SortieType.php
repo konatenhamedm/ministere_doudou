@@ -16,13 +16,13 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('libelle')
-            ->add('sens', EntityType::class, [
-                'class' => Sens::class,
-                'choice_label' => 'libelle',
-                'label' => 'Sens',
-                'attr' =>
-                ['class' => 'has-select2 form-select']
-            ])
+            // ->add('sens', EntityType::class, [
+            //     'class' => Sens::class,
+            //     'choice_label' => 'libelle',
+            //     'label' => 'Sens',
+            //     'attr' =>
+            //     ['class' => 'has-select2 form-select']
+            // ])
             ->add('lignesorties', CollectionType::class, [
                 'entry_type' => LigneSortieType::class,
                 'entry_options' => [

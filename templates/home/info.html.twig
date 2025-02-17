@@ -21,11 +21,13 @@
                 </tr>
                 <tr>
                     <td class="fw-bold">Date début</td>
-                    <td>{{ data.start | date("m-d-Y") }}</td>
+                  
+                    {{ data.start ? data.start|date('d/m/Y') ~ ' à ' ~ data.start|date('H:i') : '' }}
                 </tr>
                 <tr>
                     <td class="fw-bold">Date fin</td>
-                    <td>{{ data.end | date("m-d-Y") }}</td>
+                    {{ data.start ? data.end|date('d/m/Y') ~ ' à ' ~ data.end|date('H:i') : '' }}
+                   
                 </tr>
                 <tr>
                     <td class="fw-bold">Objet</td>

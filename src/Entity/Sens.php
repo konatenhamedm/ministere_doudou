@@ -21,19 +21,19 @@ class Sens
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
-    #[ORM\OneToMany(mappedBy: 'sens', targetEntity: Entree::class)]
-    private Collection $entrees;
+    // #[ORM\OneToMany(mappedBy: 'sens', targetEntity: Entree::class)]
+    // private Collection $entrees;
 
-    #[ORM\OneToMany(mappedBy: 'sens', targetEntity: Sortie::class)]
-    private Collection $sorties;
+    // #[ORM\OneToMany(mappedBy: 'sens', targetEntity: Sortie::class)]
+    // private Collection $sorties;
 
     #[ORM\OneToMany(mappedBy: 'sens', targetEntity: Mouvement::class)]
     private Collection $mouvements;
 
     public function __construct()
     {
-        $this->entrees = new ArrayCollection();
-        $this->sorties = new ArrayCollection();
+        // $this->entrees = new ArrayCollection();
+        // $this->sorties = new ArrayCollection();
         $this->mouvements = new ArrayCollection();
     }
 
@@ -66,65 +66,65 @@ class Sens
         return $this;
     }
 
-    /**
-     * @return Collection<int, Entree>
-     */
-    public function getEntrees(): Collection
-    {
-        return $this->entrees;
-    }
+    // /**
+    //  * @return Collection<int, Entree>
+    //  */
+    // public function getEntrees(): Collection
+    // {
+    //     return $this->entrees;
+    // }
 
-    public function addEntree(Entree $entree): static
-    {
-        if (!$this->entrees->contains($entree)) {
-            $this->entrees->add($entree);
-            $entree->setSens($this);
-        }
+    // public function addEntree(Entree $entree): static
+    // {
+    //     if (!$this->entrees->contains($entree)) {
+    //         $this->entrees->add($entree);
+    //         $entree->setSens($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeEntree(Entree $entree): static
-    {
-        if ($this->entrees->removeElement($entree)) {
-            // set the owning side to null (unless already changed)
-            if ($entree->getSens() === $this) {
-                $entree->setSens(null);
-            }
-        }
+    // public function removeEntree(Entree $entree): static
+    // {
+    //     if ($this->entrees->removeElement($entree)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($entree->getSens() === $this) {
+    //             $entree->setSens(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    /**
-     * @return Collection<int, Sortie>
-     */
-    public function getSorties(): Collection
-    {
-        return $this->sorties;
-    }
+    // /**
+    //  * @return Collection<int, Sortie>
+    //  */
+    // public function getSorties(): Collection
+    // {
+    //     return $this->sorties;
+    // }
 
-    public function addSorty(Sortie $sorty): static
-    {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setSens($this);
-        }
+    // public function addSorty(Sortie $sorty): static
+    // {
+    //     if (!$this->sorties->contains($sorty)) {
+    //         $this->sorties->add($sorty);
+    //         $sorty->setSens($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeSorty(Sortie $sorty): static
-    {
-        if ($this->sorties->removeElement($sorty)) {
-            // set the owning side to null (unless already changed)
-            if ($sorty->getSens() === $this) {
-                $sorty->setSens(null);
-            }
-        }
+    // public function removeSorty(Sortie $sorty): static
+    // {
+    //     if ($this->sorties->removeElement($sorty)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($sorty->getSens() === $this) {
+    //             $sorty->setSens(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, Mouvement>

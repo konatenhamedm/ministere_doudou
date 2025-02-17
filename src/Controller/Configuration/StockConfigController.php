@@ -98,11 +98,11 @@ class  StockConfigController extends BaseController
 
                
 
-                [
-                    'label' => 'Sens',
-                    'id' => 'param_sens',
-                    'href' => $this->generateUrl('app_gestionstock_sens_index')
-                ],
+                // [
+                //     'label' => 'Sens',
+                //     'id' => 'param_sens',
+                //     'href' => $this->generateUrl('app_gestionstock_sens_index')
+                // ],
                 [
                     'label' => 'Etat',
                     'id' => 'param_etat',

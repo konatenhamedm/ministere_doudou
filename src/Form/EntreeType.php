@@ -16,12 +16,12 @@ class EntreeType extends AbstractType
     {
         $builder
             ->add('libelle')
-            ->add('sens',EntityType::class, [
-                'class' => Sens::class, 
-                'choice_label' => 'libelle',
-                 'label' => 'Sens', 'attr' => 
-                 ['class' => 'has-select2 form-select']
-                 ])
+            // ->add('sens',EntityType::class, [
+            //     'class' => Sens::class, 
+            //     'choice_label' => 'libelle',
+            //      'label' => 'Sens', 'attr' => 
+            //      ['class' => 'has-select2 form-select']
+            //      ])
             ->add('ligneEntrees', CollectionType::class, [
                 'entry_type' => LigneEntreeType::class,
                 'entry_options' => [

@@ -41,14 +41,14 @@ class CalendarController extends BaseController
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Calendar::class,
                 'query' => function (QueryBuilder $qb) use ($etat) {
-                    $qb->select(['p', 'en'])
+                    $qb->select(['p',])
                         ->from(Calendar::class, 'p')
-                        ->join('p.entreprise', 'en')
+                        // ->join('p.entreprise', 'en')
                         ->orderBy('p.id ', 'DESC');
-                    if ($this->groupe != "SADM") {
-                        $qb->andWhere('en = :entreprise')
-                            ->setParameter('entreprise', $this->entreprise);
-                    }
+                    // if ($this->groupe != "SADM") {
+                    //     $qb->andWhere('en = :entreprise')
+                    //         ->setParameter('entreprise', $this->entreprise);
+                    // }
                     if ($etat == "passe") {
                         $qb->andWhere('p.start <= :start or p.end <= :start')
                             ->setParameter('start', new \DateTime());
@@ -122,7 +122,11 @@ class CalendarController extends BaseController
 
             if ($hasActions) {
                 $table->add('id', TextColumn::class, [
-                    'label' => 'Actions', 'orderable' => false, 'globalSearchable' => false, 'className' => 'grid_row_actions', 'render' => function ($value, Calendar $context) use ($renders) {
+                    'label' => 'Actions',
+                    'orderable' => false,
+                    'globalSearchable' => false,
+                    'className' => 'grid_row_actions',
+                    'render' => function ($value, Calendar $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
@@ -131,14 +135,26 @@ class CalendarController extends BaseController
                             'actions' => [
                                 'edit' => [
                                     'target' => '#exampleModalSizeSm2',
-                                    'url' => $this->generateUrl('app_agenda_calendar_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
+                                    'url' => $this->generateUrl('app_agenda_calendar_edit', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon% bi bi-pen',
+                                    'attrs' => ['class' => 'btn-default'],
+                                    'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_agenda_calendar_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
+                                    'url' => $this->generateUrl('app_agenda_calendar_show', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon% bi bi-eye',
+                                    'attrs' => ['class' => 'btn-primary'],
+                                    'render' => $renders['show']
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_agenda_calendar_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'], 'render' => $renders['delete']
+                                    'url' => $this->generateUrl('app_agenda_calendar_delete', ['id' => $value]),
+                                    'ajax' => true,
+                                    'icon' => '%icon% bi bi-trash',
+                                    'attrs' => ['class' => 'btn-main'],
+                                    'render' => $renders['delete']
                                 ]
                             ]
 
@@ -182,7 +198,7 @@ class CalendarController extends BaseController
         $isAjax = $request->isXmlHttpRequest();
         // dd($form->getData());
         if ($form->isSubmitted()) {
-          
+
             $response = [];
             $redirect = $this->generateUrl('app_config_parametre_agenda_index');
             //$email = "";
@@ -221,10 +237,10 @@ class CalendarController extends BaseController
                     ->setBackgroundColor("#31F74F")
                     ->setBorderColor("#BBF0DA")
                     ->setTextColor("#FAF421");
-                $calendar->setEntreprise($this->entreprise);
+                // $calendar->setEntreprise($this->entreprise);
                 $entityManager->persist($calendar);
                 $entityManager->flush();
-// 
+                // 
                 $data = true;
                 $message = 'Opération effectuée avec succès';
                 $statut = 1;

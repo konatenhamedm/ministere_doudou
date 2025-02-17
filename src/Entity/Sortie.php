@@ -20,8 +20,8 @@ class Sortie
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
-    private ?Sens $sens = null;
+    // #[ORM\ManyToOne(inversedBy: 'sorties')]
+    // private ?Sens $sens = null;
 
     // #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class, cascade: ['persist', 'remove'])]
     // private Collection $ligneSorties;
@@ -56,17 +56,17 @@ class Sortie
         return $this;
     }
 
-    public function getSens(): ?Sens
-    {
-        return $this->sens;
-    }
+    // public function getSens(): ?Sens
+    // {
+    //     return $this->sens;
+    // }
 
-    public function setSens(?Sens $sens): static
-    {
-        $this->sens = $sens;
+    // public function setSens(?Sens $sens): static
+    // {
+    //     $this->sens = $sens;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
    
 
