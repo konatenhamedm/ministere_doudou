@@ -21,6 +21,44 @@ class LigneMouvementRepository extends ServiceEntityRepository
         parent::__construct($registry, LigneMouvement::class);
     }
 
+    public function add(LigneMouvement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(LigneMouvement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function getTotalCump($article){
+        return $this->createQueryBuilder('s')
+            ->select('SUM(s.quantite*s.coutAchat)')
+            ->where('s.article = :article')
+            ->setParameter('article', $article)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
+    public  function getLigne($article){
+        return $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)')
+            ->where('s.article = :article')
+            ->setParameter('article', $article)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
 //    /**
 //     * @return LigneMouvement[] Returns an array of LigneMouvement objects
 //     */

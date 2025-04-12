@@ -5,9 +5,7 @@ namespace App\Controller;
 
 
 use App\Controller\FileTrait;
-use App\Repository\FacturelocRepository;
-use App\Repository\TypeVersementsRepository;
-use App\Repository\VersmtProprioRepository;
+
 use App\Service\Menu;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +26,7 @@ class BaseController extends AbstractController
     protected $menu;
     protected  $entreprise;
     protected  $groupe;
-protected $workflow;
+    protected $workflow;
     protected  $hasher;
 
 
@@ -47,6 +45,5 @@ protected $workflow;
         }
 
         $this->groupe = $this->security->getUser()->getGroupe()->getCode();
-       
     }
 }

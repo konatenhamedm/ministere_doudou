@@ -82,7 +82,7 @@ class MissionController extends BaseController
                             ->setParameter('etat', "en_cours");
                     } elseif ($etat == 'termine') {
                         $req->andWhere("m.etat =:etat")
-                            ->setParameter('etat', "valide");
+                            ->setParameter('etat', "termine");
                     }
                 }
             ])

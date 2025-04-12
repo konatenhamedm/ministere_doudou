@@ -5,11 +5,15 @@ namespace App\Entity;
 use App\Repository\MouvementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: MouvementRepository::class)]
+#[ORM\InheritanceType("JOINED")]
+#[ORM\DiscriminatorColumn(name:"discr", type:"string")]
+#[UniqueEntity(fields: 'reference', message: 'Ce code est déjà associé à un mouvement')]
+#[ORM\Table(name:'stock_mouvement')]
 class Mouvement
 {
     #[ORM\Id]
@@ -17,21 +21,29 @@ class Mouvement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'mouvements')]
-    private ?Sens $sens = null;
-
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
 
-    #[ORM\OneToMany(mappedBy: 'mouvement', targetEntity: LigneMouvement::class, cascade: ['persist', 'remove'])]
-    private Collection $ligneMouvements;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Gedmo\Timestampable(on: "create")]
-    private ?\DateTimeInterface $date = null;
+    private ?\DateTimeInterface $dateEntree = null;
+
+
+    #[ORM\OneToMany(mappedBy: 'entreeStock', targetEntity: LigneMouvement::class, orphanRemoval: true, cascade:['persist'])]
+    private Collection $ligneEntrees;
+
+    #[ORM\ManyToOne(inversedBy: 'entreeStocks')]
+    private ?Sens $sens = null;
+
+    #[ORM\Column(length: 15,unique:true)]
+    private ?string $reference = null;
+
+    #[ORM\ManyToOne(inversedBy: 'mouvements')]
+    private ?Magasin $magasin = null;
+
+
     public function __construct()
     {
-        $this->ligneMouvements = new ArrayCollection();
+        $this->ligneEntrees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,71 +51,96 @@ class Mouvement
         return $this->id;
     }
 
-    public function getSens(): ?Sens
-    {
-        return $this->sens;
-    }
-
-    public function setSens(?Sens $sens): static
-    {
-        $this->sens = $sens;
-
-        return $this;
-    }
-
     public function getLibelle(): ?string
     {
         return $this->libelle;
     }
 
-    public function setLibelle(string $libelle): static
+    public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
 
         return $this;
     }
 
+    public function getDateEntree(): ?\DateTimeInterface
+    {
+        return $this->dateEntree;
+    }
+
+    public function setDateEntree(\DateTimeInterface $dateEntree): self
+    {
+        $this->dateEntree = $dateEntree;
+
+        return $this;
+    }
+
+
     /**
      * @return Collection<int, LigneMouvement>
      */
-    public function getLigneMouvements(): Collection
+    public function getLigneEntrees(): Collection
     {
-        return $this->ligneMouvements;
+        return $this->ligneEntrees;
     }
 
-    public function addLigneMouvement(LigneMouvement $ligneMouvement): static
+    public function addLigneEntree(LigneMouvement $ligneEntree): self
     {
-        if (!$this->ligneMouvements->contains($ligneMouvement)) {
-            $this->ligneMouvements->add($ligneMouvement);
-            $ligneMouvement->setMouvement($this);
+        if (!$this->ligneEntrees->contains($ligneEntree)) {
+            $this->ligneEntrees->add($ligneEntree);
+            $ligneEntree->setEntreeStock($this);
         }
 
         return $this;
     }
 
-    public function removeLigneMouvement(LigneMouvement $ligneMouvement): static
+    public function removeLigneEntree(LigneMouvement $ligneEntree): self
     {
-        if ($this->ligneMouvements->removeElement($ligneMouvement)) {
+        if ($this->ligneEntrees->removeElement($ligneEntree)) {
             // set the owning side to null (unless already changed)
-            if ($ligneMouvement->getMouvement() === $this) {
-                $ligneMouvement->setMouvement(null);
+            if ($ligneEntree->getEntreeStock() === $this) {
+                $ligneEntree->setEntreeStock(null);
             }
         }
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getSens(): ?Sens
     {
-        return $this->date;
+        return $this->sens;
     }
 
-
-
-    public function setDate(\DateTimeInterface $date): static
+    public function setSens(?Sens $sens): self
     {
-        $this->date = $date;
+        $this->sens = $sens;
 
         return $this;
     }
+
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getMagasin(): ?Magasin
+    {
+        return $this->magasin;
+    }
+
+    public function setMagasin(?Magasin $magasin): self
+    {
+        $this->magasin = $magasin;
+
+        return $this;
+    }
+
 }

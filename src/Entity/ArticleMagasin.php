@@ -2,38 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\LigneMouvementRepository;
+use App\Repository\ArticleMagasinRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
-#[ORM\Entity(repositoryClass: LigneMouvementRepository::class)]
-#[ORM\Table(name:'stock_ligne_mouvement')]
-#[HasLifecycleCallbacks]
-class LigneMouvement
+#[ORM\Entity(repositoryClass: ArticleMagasinRepository::class)]
+class ArticleMagasin
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneEntrees')]
+    #[ORM\ManyToOne(inversedBy: 'articleMagasins')]
     private ?Article $article = null;
+
+    #[ORM\ManyToOne(inversedBy: 'articleMagasins')]
+    private ?Magasin $magasin = null;
 
     #[ORM\Column]
     private ?int $quantite = null;
+
+    #[ORM\Column]
+    private ?int $seuil = null;
 
     private $ancienneQuantite;
 
     private $articleSupprime;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneEntrees')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Mouvement $entreeStock = null;
-
-
-    public $disableStockUpdateListener = false;
-
-    
+    public  function __construct()
+    {
+        $this->quantite = 0;
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +50,18 @@ class LigneMouvement
         return $this;
     }
 
+    public function getMagasin(): ?Magasin
+    {
+        return $this->magasin;
+    }
+
+    public function setMagasin(?Magasin $magasin): self
+    {
+        $this->magasin = $magasin;
+
+        return $this;
+    }
+
     public function getQuantite(): ?int
     {
         return $this->quantite;
@@ -63,19 +74,20 @@ class LigneMouvement
         return $this;
     }
 
-    public function getEntreeStock(): ?Mouvement
+    public function getSeuil(): ?int
     {
-        return $this->entreeStock;
+        return $this->seuil;
     }
 
-    public function setEntreeStock(?Mouvement $entreeStock): self
+    public function setSeuil(int $seuil): self
     {
-        $this->entreeStock = $entreeStock;
+        $this->seuil = $seuil;
 
         return $this;
     }
 
-    #[ORM\PostLoad]
+
+
     public function setAncienneQuantite()
     {
         $this->ancienneQuantite = $this->quantite;

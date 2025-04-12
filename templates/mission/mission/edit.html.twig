@@ -18,55 +18,38 @@
         {{ include('_includes/ajax/response.html.twig') }}
     <div class="row">
         <div class="col-md-12">
-            {{ form_row(form.objetMission)}}
+            {{ form_row(form.objetMission) }}
         </div>
-    
-        <div class="col-md-6 ">
-            {{ form_row(form.options)}}
+        <div class="col-md-6">
+            {{ form_row(form.options) }}
         </div>
-    
         <div class="col-md-6">
             <label class="required">JOINDRE LES TDR</label>
-            {{ form_row(form.fichier)}}
-        </div>
-    
-        <div class="col-md-6">
-            {{ form_row(form.dateDebutPrevue)}}
-    
+            {{ form_row(form.fichier) }}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.dateFinPrevue)}}
-        </div>
-    
-    
-        {# <div class="col-md-6">
-            {{ form_row(form.initiateurMission)}}
-        </div> #}
-        {# <div class="col-md-6">
-            {{ form_row(form.employe)}}
-        </div> #}
-    
-        <div class="col-md-6">
-            {{ form_row(form.moyenTransport)}}
+            {{ form_row(form.dateDebutPrevue) }}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.participants)}}
+            {{ form_row(form.dateFinPrevue) }}
         </div>
-    
-        <div class="col-md-12">
-            {{ form_row(form.compteRendu)}}
+        <div class="col-md-6">
+            {{ form_row(form.moyenTransport) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.participants) }}
         </div>
         <div class="col-md-12">
-            {{ form_row(form.justification)}}
+            {{ form_row(form.compteRendu) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.justification) }}
         </div>
     </div>
-    
-    
-    </div>
-    <div class="p-8">
-    
-        {{ prototype_ligne_missions(form) }}
-    </div>
+</div>
+<div class="p-8">
+    {{ prototype_ligne_missions(form) }}
+</div>
     <div class="modal-footer">
         {# {{ include('_includes/ajax/loader.html.twig') }} #}
         <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Annuler</button>
@@ -76,192 +59,191 @@
 {% endblock %}
 
 {% block javascripts_inline %}
-    <script>
-        // --- Fonctions utilitaires ---
+  <script>
+    // --- Fonctions utilitaires ---
 
-        // Convertit une chaîne "YYYY-MM-DD" en objet Date
-        function parseDate(dateStr) {
-            var parts = dateStr.split('-');
-            return new Date(parts[0], parts[1] - 1, parts[2]);
+    // Convertit une chaîne "YYYY-MM-DD" en objet Date  function parseDate(dateStr) {
+    function parseDate(dateStr) {
+        var parts = dateStr.split('/');
+        if (parts.length !== 3) return new Date(); // Sécurité en cas de format invalide
+        return new Date(parts[2], parts[1] - 1, parts[0]); // Année, Mois, Jour
+    }
+    // Ajoute un nombre de jours à une date
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    // Formate une date en "dd/MM/yyyy" 
+    function formatDate(date) {
+        if (!(date instanceof Date) || isNaN(date.getTime())) return ''; // Vérifie que c'est une date valide
+        var dd = String(date.getDate()).padStart(2, '0');
+        var mm = String(date.getMonth() + 1).padStart(2, '0');
+        var yyyy = date.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    // --- Initialisation de la mission ---
+    function initMission() {
+        var today = new Date();
+        var todayStr = formatDate(today);
+        $('#mission_dateDebutPrevue').val(todayStr);
+        $('#mission_dateFinPrevue').val(todayStr);
+    }
+
+    // Met à jour les dates d'une ligne en fonction du nombre de jours saisi et de la ligne précédente
+    function updateLineDates($line) {
+        var nbJours = parseInt($line.find('.nbre-jours-table').val(), 10);
+        if (isNaN(nbJours) || nbJours <= 0) return;
+
+        var startDateStr;
+        // Si c'est la première ligne, la date de début est celle de la mission
+        var $prevLine = $line.prev('.row-colonne');
+        if ($prevLine.length === 0) {
+            startDateStr = $('#mission_dateDebutPrevue').val();
+        } else {
+            // Sinon, la date de début est la date de fin de la ligne précédente
+            startDateStr = $prevLine.find('[name*="[dateFin]"]').val();
         }
 
-        // Ajoute un nombre de jours à une date
-        function addDays(date, days) {
-            var result = new Date(date);
-            result.setDate(result.getDate() + days);
-            return result;
+        var startDate = parseDate(startDateStr);
+        var endDate = addDays(startDate, nbJours);
+
+        $line.find('[name*="[dateDebut]"]').val(formatDate(startDate));
+        $line.find('[name*="[dateFin]"]').val(formatDate(endDate));
+
+        // Met à jour la date de fin de mission si cette ligne est la dernière
+        if ($line.is(':last-child')) {
+            $('#mission_dateFinPrevue').val(formatDate(endDate));
         }
+    }
 
-        // Formate une date en "YYYY-MM-DD"
-        function formatDate(date) {
-            var day = date.getDate();
-            var month = date.getMonth() + 1;
-            var year = date.getFullYear();
-            if (day < 10) day = '0' + day;
-            if (month < 10) month = '0' + month;
-            return year + '-' + month + '-' + day;
-        }
-
-        // --- Initialisation de la mission ---
-        function initMission() {
-            var today = new Date();
-            var todayStr = formatDate(today);
-            $('#mission_dateDebutPrevue').val(todayStr);
-            $('#mission_dateFinPrevue').val(todayStr);
-        }
-
-        // Met à jour les dates d'une ligne en fonction du nombre de jours saisi et de la ligne précédente
-        function updateLineDates($line) {
-            var nbJours = parseInt($line.find('.nbre-jours-table').val(), 10);
-            if (isNaN(nbJours) || nbJours <= 0) return;
-
-            var startDateStr;
-            // Si c'est la première ligne, la date de début est celle de la mission
-            var $prevLine = $line.prev('.row-colonne');
-            if ($prevLine.length === 0) {
-                startDateStr = $('#mission_dateDebutPrevue').val();
-            } else {
-                // Sinon, la date de début est la date de fin de la ligne précédente
-                startDateStr = $prevLine.find('[name*="[dateFin]"]').val();
-            }
-
-            var startDate = parseDate(startDateStr);
-            var endDate = addDays(startDate, nbJours);
-
-            $line.find('[name*="[dateDebut]"]').val(formatDate(startDate));
-            $line.find('[name*="[dateFin]"]').val(formatDate(endDate));
-
-            // Met à jour la date de fin de mission si cette ligne est la dernière
-            if ($line.is(':last-child')) {
-                $('#mission_dateFinPrevue').val(formatDate(endDate));
-            }
-        }
-
-        // Met à jour les lignes suivantes si une modification dans une ligne impacte leur date de début
-        function updateSubsequentLines($line) {
-            $line.nextAll('.row-colonne').each(function () {
-                updateLineDates($(this));
-            });
-        }
-
-        // --- Gestion du DOM et des événements ---
-        $(function () {
-            // Initialisation des dates de mission à l'ouverture du modal
-            initMission();
-
-            // Initialisation des datepickers sur les champs concernés
-            $('.no-auto').each(function () {
-                const $this = $(this);
-                const $id = $('#' + $this.attr('id'));
-                init_date_picker($id, 'down', function (start, e) {
-                    // Callback optionnel
-                }, null, null, false);
-                $id.on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('DD/MM/YYYY'));
-                });
-            });
-            init_select2('select');
+    // Met à jour les lignes suivantes si une modification dans une ligne impacte leur date de début
+    function updateSubsequentLines($line) {
+        $line.nextAll('.row-colonne').each(function () {
+            updateLineDates($(this));
         });
+    }
 
-        $(function () {
-            init_select2('select', null, '.content-doc');
+    // --- Gestion du DOM et des événements ---
+    $(function () {
+        // Initialisation des dates de mission à l'ouverture du modal
+        initMission();
+
+        // Initialisation des datepickers sur les champs concernés
+        $('.no-auto').each(function () {
+            const $this = $(this);
+            const $id = $('#' + $this.attr('id'));
+            init_date_picker($id, 'down', function (start, e) {
+                // Callback optionnel
+            }, null, null, false);
+            $id.on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY'));
+            });
         });
+        init_select2('select');
+    });
 
-        $(function () {
-            const $container = $('.proto-container');
-            var index = $container.find('.row-colonne').length;
+    $(function () {
+        init_select2('select', null, '.content-doc');
+    });
 
-            // Gestion des sélections select2 avec champs complémentaires
-            $(document).on('select2:select', '.select-type', function (e) {
-                const $this = $(this);
-                let field_str = $this.find('option:selected').attr('data-require-fields');
-                const $parent = $this.closest('.row-colonne');
-                let fields = [];
-                if (typeof field_str !== 'undefined') {
-                    fields = field_str.split(',');
-                    for (let field of fields) {
-                        $parent.find('.' + field).removeClass('d-none');
-                    }
-                } else {
-                    $parent.find('.source,.valeurs').addClass('d-none');
+    $(function () {
+        const $container = $('.proto-container');
+        var index = $container.find('.row-colonne').length;
+
+        // Gestion des sélections select2 avec champs complémentaires
+        $(document).on('select2:select', '.select-type', function (e) {
+            const $this = $(this);
+            let field_str = $this.find('option:selected').attr('data-require-fields');
+            const $parent = $this.closest('.row-colonne');
+            let fields = [];
+            if (typeof field_str !== 'undefined') {
+                fields = field_str.split(',');
+                for (let field of fields) {
+                    $parent.find('.' + field).removeClass('d-none');
                 }
-            });
-
-            // Bouton d'ajout de ligne
-            const $addLink = $('.add_line');
-            $addLink.click(function (e) {
-                const proto_class = $(this).attr('data-protoclass');
-                const name = $(this).attr('data-protoname');
-                const $container = $($(this).attr('data-container'));
-                addLine($container, name, proto_class);
-                e.preventDefault();
-            });
-
-            // Pour les lignes déjà présentes
-            if (index > 0) {
-                $container.children('.row-colonne').each(function () {
-                    const $this = $(this);
-                    addDeleteLink($this);
-                    const $select = $this.find("select");
-                    $select.each(function () {
-                        const $this = $(this);
-                        init_select2($this, null, '#exampleModalSizeSm2');
-                        if ($this.hasClass('select-type')) {
-                            let field_str = $this.find('option:selected').attr('data-require-fields');
-                            const $parent = $this.closest('.row-colonne');
-                            let fields = [];
-                            if (typeof field_str !== 'undefined') {
-                                fields = field_str.split(',');
-                                for (let field of fields) {
-                                    $parent.find('.' + field).removeClass('d-none');
-                                }
-                            } else {
-                                $parent.find('.source,.valeurs').addClass('d-none');
-                            }
-                        }
-                    });
-                });
+            } else {
+                $parent.find('.source,.valeurs').addClass('d-none');
             }
-
-            // Fonction qui ajoute une nouvelle ligne (via prototype)
-            function addLine($container, name, proto_class) {
-                var $prototype = $($(proto_class).attr('data-prototype')
-                    .replace(new RegExp(name + 'label__', 'g'), 'Colonne ' + (index + 1))
-                    .replace(new RegExp(name, 'g'), index));
-                init_select2($prototype.find('select'), null, '#exampleModalSizeSm2');
-                addDeleteLink($prototype, name);
-                $container.append($prototype);
-
-                // Dès l'ajout, calcule les dates de la nouvelle ligne
-                updateLineDates($prototype);
-
-                index++;
-            }
-
-            // Fonction pour ajouter le lien de suppression sur une ligne
-            function addDeleteLink($prototype, name = null) {
-                var $deleteLink = $('<a href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>');
-                $prototype.find(".del-col").append($deleteLink);
-                $deleteLink.click(function (e) {
-                    var $parent = $(this).closest('.row-colonne');
-                    $parent.remove();
-                    if (index > 0) {
-                        index--;
-                    }
-                    e.preventDefault();
-                    // Met à jour les dates des lignes restantes après suppression
-                    $('.proto-container .row-colonne').each(function () {
-                        updateLineDates($(this));
-                    });
-                });
-            }
-
-            // Lorsque le nombre de jours change dans une ligne, on recalcule ses dates et celles des suivantes
-            $(document).on('change', '.nbre-jours-table', function () {
-                var $line = $(this).closest('.row-colonne');
-                updateLineDates($line);
-                updateSubsequentLines($line);
-            });
         });
-    </script>
+
+        // Bouton d'ajout de ligne
+        const $addLink = $('.add_line');
+        $addLink.click(function (e) {
+            const proto_class = $(this).attr('data-protoclass');
+            const name = $(this).attr('data-protoname');
+            const $container = $($(this).attr('data-container'));
+            addLine($container, name, proto_class);
+            e.preventDefault();
+        });
+
+        // Pour les lignes déjà présentes
+        if (index > 0) {
+            $container.children('.row-colonne').each(function () {
+                const $this = $(this);
+                addDeleteLink($this);
+                const $select = $this.find("select");
+                $select.each(function () {
+                    const $this = $(this);
+                    init_select2($this, null, '#exampleModalSizeSm2');
+                    if ($this.hasClass('select-type')) {
+                        let field_str = $this.find('option:selected').attr('data-require-fields');
+                        const $parent = $this.closest('.row-colonne');
+                        let fields = [];
+                        if (typeof field_str !== 'undefined') {
+                            fields = field_str.split(',');
+                            for (let field of fields) {
+                                $parent.find('.' + field).removeClass('d-none');
+                            }
+                        } else {
+                            $parent.find('.source,.valeurs').addClass('d-none');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Fonction qui ajoute une nouvelle ligne (via prototype)
+        function addLine($container, name, proto_class) {
+            var $prototype = $($(proto_class).attr('data-prototype')
+                .replace(new RegExp(name + 'label__', 'g'), 'Colonne ' + (index + 1))
+                .replace(new RegExp(name, 'g'), index));
+            init_select2($prototype.find('select'), null, '#exampleModalSizeSm2');
+            addDeleteLink($prototype, name);
+            $container.append($prototype);
+
+            // Dès l'ajout, calcule les dates de la nouvelle ligne
+            updateLineDates($prototype);
+
+            index++;
+        }
+
+        // Fonction pour ajouter le lien de suppression sur une ligne
+        function addDeleteLink($prototype, name = null) {
+            var $deleteLink = $('<a href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>');
+            $prototype.find(".del-col").append($deleteLink);
+            $deleteLink.click(function (e) {
+                var $parent = $(this).closest('.row-colonne');
+                $parent.remove();
+                if (index > 0) {
+                    index--;
+                }
+                e.preventDefault();
+                // Met à jour les dates des lignes restantes après suppression
+                $('.proto-container .row-colonne').each(function () {
+                    updateLineDates($(this));
+                });
+            });
+        }
+
+        // Lorsque le nombre de jours change dans une ligne, on recalcule ses dates et celles des suivantes
+        $(document).on('change', '.nbre-jours-table', function () {
+            var $line = $(this).closest('.row-colonne');
+            updateLineDates($line);
+            updateSubsequentLines($line);
+        });
+    });
+</script>
 {% endblock %}
