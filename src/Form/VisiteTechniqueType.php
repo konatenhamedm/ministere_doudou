@@ -30,21 +30,24 @@ class VisiteTechniqueType extends AbstractType
                 'required' => false,
                 'attr' => ['class' => 'has-select2 form-select']
             ])
-        ->add('dateDerniereVisite', DateType::class, [
-            'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date Derniere Visitet',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],])
-        ->add('dateProchaineVisite', DateType::class, [
-            'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de Prochaine Visite',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],
+            ->add('dateDerniereVisite', DateType::class, [
+                'label' => 'Date Derniere Visitet ',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
             ])
+            ->add('dateProchaineVisite', DateType::class, [
+                'label' => 'Date de Prochaine Visite',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+
+            
         ->add('observation', TextareaType::class, ['label' => 'Observation'])
        
         ;

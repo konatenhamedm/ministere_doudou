@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\CheckArticleStockMagasin;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
-#[ORM\Table(name:'stock_sortie')]
+#[ORM\Table(name: 'stock_sortie')]
 #[Index(name: 'idx_etat_sortie', columns: ['etat'])]
 // #[CheckArticleStockMagasin(groups: ['transfert', 'sortie'])]
 class Sortie
@@ -33,8 +33,8 @@ class Sortie
     #[Assert\NotBlank(message: 'Veuillez renseigner la date de sortie', groups: ['transfert', 'new', 'sortie', 'transfer'])]
     private ?\DateTimeInterface $dateSortie = null;
 
-    #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class,orphanRemoval: true, cascade:['persist'])]
-    #[Assert\Count(min:1, minMessage: 'Veuillez renseigner au moins une ligne',groups: ['new', 'sortie', 'transfer'])]
+    #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: LigneSortie::class, orphanRemoval: true, cascade: ['persist'])]
+    #[Assert\Count(min: 1, minMessage: 'Veuillez renseigner au moins une ligne', groups: ['new', 'sortie', 'transfer'])]
     #[Assert\Valid(groups: ['new', 'sortie', 'transfert', 'reception    '])]
     private Collection $ligneSorties;
 
@@ -222,8 +222,4 @@ class Sortie
     // }
 
 
-    public function getTransfert()
-    {
-        return $this->infoTransfert?->getTransfert();
-    }
 }

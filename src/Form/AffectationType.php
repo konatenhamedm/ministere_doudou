@@ -48,22 +48,24 @@ class AffectationType extends AbstractType
                 'attr' => ['class' => 'has-select2 form-select']
             ])
        
+ 
         ->add('dateDebut', DateType::class, [
+            'label' => 'Date de début ',
+            'html5' => false,
+            'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
             'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de début',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],
+            'format' => 'dd/MM/yyyy',
+            'empty_data' => date('d/m/Y')
         ])
-      ->add('dateFin', DateType::class, [
-                'widget' => 'single_text',
-                'html5' => false, // Désactiver le champ HTML5
-                'label' => 'Date de fin',
-                'format' => 'dd/MM/yyyy', // Personnalisation du format
-                'empty_data' => date('d/m/Y'),
-                'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite'],
-            ])
+        ->add('dateFin', DateType::class, [
+            'label' => 'Date de fin',
+            'html5' => false,
+            'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'empty_data' => date('d/m/Y')
+        ])
+      
             ->add('nature', TextareaType::class, [
                 'label' => 'Nature de l\'affectation',
             ])

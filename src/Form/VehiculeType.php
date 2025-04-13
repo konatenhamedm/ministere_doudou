@@ -29,42 +29,35 @@ class VehiculeType extends AbstractType
             // ->add('type')
             ->add('immatriculation', TextType::class, ['label' => 'Immatriculation'])
             ->add('chassi', TextType::class, ['label' => 'Chassis'])
-            ->add(
-                'dateAcquisition',
-                DateType::class,
-                [
+            
+            ->add('dateAcquisition', DateType::class, [
+                'label' => 'Date  Acquisition ',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
                 'widget' => 'single_text',
-                'html5' => false, // Désactiver le champ HTML5
-                'label' => 'Date  Acquisition',
-                'format' => 'dd/MM/yyyy', // Personnalisation du format
-                'empty_data' => date('d/m/Y'),
-                'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite'],
-                ]
-            )
-            ->add(
-                'dateMiseEnCirculation',
-                DateType::class,
-                [
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+
+            ->add('dateMiseEnCirculation', DateType::class, [
+                'label' => 'Date  Mise En Circulation ',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
                 'widget' => 'single_text',
-                'html5' => false, // Désactiver le champ HTML5
-                'label' => 'Date  Mise En Circulation',
-                'format' => 'dd/MM/yyyy', // Personnalisation du format
-                'empty_data' => date('d/m/Y'),
-                'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite']
-                ]
-            )
-            ->add(
-                'dateSortie',
-                DateType::class,
-                [
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+
+            ->add('dateSortie', DateType::class, [
+                'label' => 'Date  Sortie ',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
                 'widget' => 'single_text',
-                'html5' => false, // Désactiver le champ HTML5
-                'label' => 'Date  Sortie',
-                'format' => 'dd/MM/yyyy', // Personnalisation du format
-                'empty_data' => date('d/m/Y'),
-                'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite']
-                ]
-            )
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+    
+    
 
             ->add('marque', EntityType::class, [
                 'class' => Marque::class,

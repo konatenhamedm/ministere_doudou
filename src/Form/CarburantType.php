@@ -22,27 +22,28 @@ class CarburantType extends AbstractType
             // ->add('quantite')
             // ->add('montant')
             // ->add('vehicule')
-              ->add('reference',TextType::class, ['label' => 'Reference'])  
-            ->add('date', DateType::class, [
-            'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de début',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],
-        ])
-            ->add('quantite',IntegerType::class, ['label' => 'Quantité'])
-            ->add('montant',IntegerType::class, ['label' => 'Montant'])
-        ->add('vehicule', EntityType::class, [
-            'class' => Vehicule::class,
-            'choice_label' => function ($data) {
-                return $data->getImmatriculation();
-            },
+            ->add('reference', TextType::class, ['label' => 'Reference'])
 
-            'label' => 'Vehicule',
-            'required' => false,
-            'attr' => ['class' => 'has-select2 form-select']
-        ])
+            ->add('date', DateType::class, [
+                'label' => 'Date de début',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+            ->add('quantite', IntegerType::class, ['label' => 'Quantité'])
+            ->add('montant', IntegerType::class, ['label' => 'Montant'])
+            ->add('vehicule', EntityType::class, [
+                'class' => Vehicule::class,
+                'choice_label' => function ($data) {
+                    return $data->getImmatriculation();
+                },
+
+                'label' => 'Vehicule',
+                'required' => false,
+                'attr' => ['class' => 'has-select2 form-select']
+            ])
         ;
     }
 

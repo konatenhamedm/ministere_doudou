@@ -26,22 +26,22 @@ class AssuranceType extends AbstractType
             // ->add('vehicule') 
               ->add('numeroPolice',TextType::class, ['label' => 'N° Police'])
             ->add('compagnie',IntegerType::class, ['label' => 'Compagnie'])
-        ->add('dateDebut', DateType::class, [
-            'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de début',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-debut-localite'],
-        ])
-        ->add('dateFin', DateType::class, [
-            'widget' => 'single_text',
-            'html5' => false, // Désactiver le champ HTML5
-            'label' => 'Date de fin',
-            'format' => 'dd/MM/yyyy', // Personnalisation du format
-            'empty_data' => date('d/m/Y'),
-            'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite'],
-        ])
+            ->add('dateDebut', DateType::class, [
+                'label' => 'Date de début ',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
+            ->add('dateFin', DateType::class, [
+                'label' => 'Date de fin',
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
+            ])
             ->add('montant',IntegerType::class, ['label' => 'Montant'])
 
         ->add('vehicule', EntityType::class, [

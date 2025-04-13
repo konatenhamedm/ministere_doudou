@@ -26,10 +26,14 @@
 
 {% block java %}
     <script>
-          $('.no-auto').each(function () {
+        
+        $(function () {
+            init_select2('select');
+              $(function () {
+            $('.no-auto').each(function () {
                 const $this = $(this);
                 const $id = $('#' + $this.attr('id'));
-                init_date_picker($id, 'down', (start, e) => {
+                init_date_picker($id,  'down', (start, e) => {
                     //$this.val(start.format('DD/MM/YYYY'));
                 }, null, null, false);
 
@@ -37,8 +41,7 @@
                     $(this).val(picker.startDate.format('DD/MM/YYYY'));
                 });
             });
-        $(function () {
-            init_select2('select');
+        });
         });
         $(function () {
             init_select2('select', null, '.content-doc');

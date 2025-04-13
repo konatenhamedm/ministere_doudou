@@ -25,6 +25,7 @@ class RedactionType extends AbstractType
                 , 'format' => 'dd/MM/yyyy'
                 , 'empty_data' => date('d/m/Y')
             ])
+            
             ->add('fichier', FichierType::class, ['label' => 'Fichier', 'label' => false, 'doc_options' => $options['doc_options'], 'required' => $options['doc_required'] ?? true])
         ;
     }

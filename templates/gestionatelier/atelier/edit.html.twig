@@ -1,6 +1,7 @@
 {% block page_content %}
     {% form_theme form 'widget/fields-block.html.twig' %}
-        {% from '_macros/document_atelier.html.twig' import prototype_document_atelier %}
+   {% from '_macros/document_atelier.html.twig' import prototype_document_ateliers %}
+
 
     <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Modification Atelier</h5>
@@ -40,7 +41,7 @@
         </div>
         <div class="p-8">
         
-            {{ prototype_document_atelier(form) }}
+        {{ prototype_document_ateliers(form) }}
         </div>
     <div class="modal-footer">
         {# {{ include('_includes/ajax/loader.html.twig') }} #}

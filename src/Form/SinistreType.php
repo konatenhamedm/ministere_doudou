@@ -33,15 +33,14 @@ class SinistreType extends AbstractType
                 'required' => false,
                 'attr' => ['class' => 'has-select2 form-select']
             ])
-            ->add('date',DateType::class,
-          
-            [
-                'widget' => 'single_text',
-                'html5' => false, // Désactiver le champ HTML5
+           
+            ->add('date', DateType::class, [
                 'label' => 'Date Sinistre',
-                'format' => 'dd/MM/yyyy', // Personnalisation du format
-                'empty_data' => date('d/m/Y'),
-                'attr' => ['autocomplete' => 'off', 'class' => 'date-fin-localite']
+                'html5' => false,
+                'attr' => ['class' => 'has-datepicker no-auto skip-init', 'autocomplete' => 'off'],
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'empty_data' => date('d/m/Y')
             ])
            
             ->add('lieu',TextType::class, ['label' => 'Lieu'])
